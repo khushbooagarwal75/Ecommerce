@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/components/customTextField.dart';
+import 'package:ecommerce_app/components/pageTitle.dart';
 import 'package:flutter/material.dart';
 
 class Forgotpassword extends StatelessWidget {
@@ -16,11 +17,9 @@ class Forgotpassword extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Forgot \npassword?",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),),
+                Pagetitle(
+                    text1: "Forgot ",
+                    text2: "password?"),
                 SizedBox(
                   height: 30,
                 ),

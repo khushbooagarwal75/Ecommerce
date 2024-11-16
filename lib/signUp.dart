@@ -1,5 +1,7 @@
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/components/customTextField.dart';
+import 'package:ecommerce_app/components/pageTitle.dart';
+import 'package:ecommerce_app/components/socialNetworks.dart';
 import 'package:ecommerce_app/login.dart';
 import 'package:flutter/material.dart';
 
@@ -19,11 +21,9 @@ class Signup extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Create an \naccount",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),),
+                Pagetitle(
+                    text1: "Create an ",
+                    text2: "account"),
                 SizedBox(
                   height: 30,
                 ),
@@ -89,100 +89,16 @@ class Signup extends StatelessWidget {
                 SizedBox(
                   height: 80,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("- OR Continue with -"),
-                    SizedBox(height: 15,),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.red.shade300),
-                            color: Colors.transparent,
-
-                          ),
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.red.shade300),
-                            color: Colors.transparent,
-
-                          ),
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.red.shade300),
-                            color: Colors.transparent,
-
-                          ),
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
-                            ),
-                          ),
-                        ),
-
-                      ],
-                    ),
-
-                    SizedBox(
-                      height: 30,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context, MaterialPageRoute(
-                          builder: (context) {
-                            return Login();
-                          },));
-                      },
-                      child: RichText(
-                          text: TextSpan(
-                              children: [
-                                TextSpan(text: "I Already Have an Account ",
-                                    style:TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black
-                                    ) ),
-                                TextSpan(text: "Login",
-                                    style:TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.red
-                                    ) ),
-                              ]
-                          )
-                      ),
-                    )
-
-                  ],
-                ),
+                Socialnetworks(
+                    onPressed: () {
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                        builder: (context) {
+                          return Login();
+                        },));
+                    },
+                    text1: "I Already Have an Account ",
+                    text2: "Login")
 
 
 

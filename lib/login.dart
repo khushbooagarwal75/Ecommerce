@@ -1,6 +1,9 @@
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/components/customTextField.dart';
+import 'package:ecommerce_app/components/pageTitle.dart';
+import 'package:ecommerce_app/components/socialNetworks.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
+import 'package:ecommerce_app/getStarted.dart';
 import 'package:ecommerce_app/signUp.dart';
 import 'package:flutter/material.dart';
 
@@ -21,11 +24,9 @@ class Login extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Welcome \nBack!",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),),
+                Pagetitle(
+                    text1: "Welcome",
+                    text2: "Back!"),
                 SizedBox(
                   height: 30,
                 ),
@@ -48,7 +49,7 @@ class Login extends StatelessWidget {
                   height: 5,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom:0,left:240, top:0,right: 5),
+                  padding: const EdgeInsets.only(bottom:0,left:220, top:0,right: 5),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -60,7 +61,7 @@ class Login extends StatelessWidget {
                     child: Text("Forgot Password?",
                       style: TextStyle(
                        color: Colors.red,
-                       fontSize: 10,
+                       fontSize: 12,
 
                       )),
                   ),
@@ -71,107 +72,25 @@ class Login extends StatelessWidget {
                 Custombutton(
                     text: "Login",
                     onPressed: () {
-
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) {
+                              return Getstarted();
+                            },));
                     },
                 ),
                 SizedBox(
                   height: 100,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("- OR Continue with -"),
-                    SizedBox(height: 15,),
-          
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.red.shade300),
-                            color: Colors.transparent,
-          
-                          ),
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.red.shade300),
-                            color: Colors.transparent,
-          
-                          ),
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.red.shade300),
-                            color: Colors.transparent,
-          
-                          ),
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
-                            ),
-                          ),
-                        ),
-          
-                      ],
-                    ),
-          
-                    SizedBox(
-                      height: 30,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context, MaterialPageRoute(
-                            builder: (context) {
-                              return Signup();
-                            },));
-                      },
-                      child: RichText(
-                          text: TextSpan(
-                              children: [
-                                TextSpan(text: "Create An Account ",
-                                    style:TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black
-                                    ) ),
-                                TextSpan(text: "Sign Up",
-                                    style:TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.red
-                                    ) ),
-                              ]
-                          )
-                      ),
-                    )
-          
-                  ],
-                ),
-          
+                Socialnetworks(
+                    onPressed: () {
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                        builder: (context) {
+                          return Signup();
+                        },));
+                    },
+                    text1: "Create An Account ",
+                    text2: "Sign Up")
           
           
               ],
