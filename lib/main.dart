@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
 import 'package:ecommerce_app/login.dart';
 import 'package:ecommerce_app/navigation/navigation_provider.dart';

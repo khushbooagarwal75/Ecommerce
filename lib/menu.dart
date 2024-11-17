@@ -1,4 +1,7 @@
+import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/home.dart';
+import 'package:ecommerce_app/profile.dart';
+import 'package:ecommerce_app/trendingProducts.dart';
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
@@ -14,9 +17,9 @@ class _MenuState extends State<Menu> {
   // Screens for each navigation item
   final List<Widget> _pages = [
     Home(),
-    Center(child: Text("Wishlist", style: TextStyle(fontSize: 24))),
-  Center(child: Text("Search Page", style: TextStyle(fontSize: 24))),
-    Center(child: Text("Setting Page", style: TextStyle(fontSize: 24))),
+   Checkout(),
+  Trendingproducts(),
+    Profile(),
   ];
 
   @override
@@ -82,7 +85,6 @@ class _MenuState extends State<Menu> {
             left: MediaQuery.of(context).size.width / 2 - 28, // Centers the button
             child: FloatingActionButton(
               onPressed: () {
-                print("Cart Button Pressed");
               },
               child: Icon(Icons.shopping_cart),
             ),
