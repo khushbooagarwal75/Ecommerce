@@ -12,7 +12,21 @@ class _TrendingproductsState extends State<Trendingproducts> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            backgroundColor: Colors.grey.withOpacity(0.2),
+
+          appBar: AppBar(
+            title: Text("Cartify"),
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+            actions: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset("assets/images/cartify.png"),
+              )
+            ],
+          ),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

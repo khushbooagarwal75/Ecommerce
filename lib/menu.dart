@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/home.dart';
+import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/profile.dart';
 import 'package:ecommerce_app/trendingProducts.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +18,9 @@ class _MenuState extends State<Menu> {
   // Screens for each navigation item
   final List<Widget> _pages = [
     Home(),
-   Checkout(),
-  Trendingproducts(),
-    Profile(),
+   Text("wishlist"),
+ Text("Search"),
+    Text('Settings'),
   ];
 
   @override
@@ -31,11 +32,19 @@ class _MenuState extends State<Menu> {
         automaticallyImplyLeading: false,
         leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
         actions: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return Profile();
+                  },));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset("assets/images/cartify.png"),
             ),
-            child: Image.asset("assets/images/cartify.png"),
           )
         ],
       ),
@@ -69,7 +78,7 @@ class _MenuState extends State<Menu> {
                 label: "Wishlist",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person,color: Colors.black,),
+                icon: Icon(Icons.search,color: Colors.black,),
                 label: "Search",
               ),
               BottomNavigationBarItem(
@@ -85,6 +94,9 @@ class _MenuState extends State<Menu> {
             left: MediaQuery.of(context).size.width / 2 - 28, // Centers the button
             child: FloatingActionButton(
               onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Placeorder();
+                },));
               },
               child: Icon(Icons.shopping_cart),
             ),

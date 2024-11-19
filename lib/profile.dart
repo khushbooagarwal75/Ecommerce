@@ -17,7 +17,7 @@ class _ProfileState extends State<Profile> {
     String dropdownValue = city.first;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Checkout"),
+        title: Text("Profile"),
         centerTitle: true,
         leading: IconButton(
             onPressed: () {

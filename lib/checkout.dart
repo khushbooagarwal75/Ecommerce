@@ -82,35 +82,38 @@ class Checkout extends StatelessWidget {
               ),
               Card(
                 color: Colors.white,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                          Image.asset("assets/images/cartify.png", width: 120,),
-                        Column(
-                          children: [
-                            Text("Women's Casual Wear",
-                              style: TextStyle(
-                                fontSize: 16
-                              ),)
-                          ],
-                        )
-                      ],
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Total Order (1) :"),
-                        Text("data")
-                      ],
-                    )
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                            Image.asset("assets/images/cartify.png", width: 120,),
+                          Column(
+                            children: [
+                              Text("Women's Casual Wear",
+                                style: TextStyle(
+                                  fontSize: 16
+                                ),)
+                            ],
+                          )
+                        ],
+                      ),
+                      Divider(
+                        height: 1,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Total Order (1) :"),
+                          Text("data")
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               )
             ],

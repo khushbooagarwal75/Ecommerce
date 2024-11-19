@@ -3,6 +3,7 @@ import 'package:ecommerce_app/forgotPassword.dart';
 import 'package:ecommerce_app/login.dart';
 import 'package:ecommerce_app/navigation/navigation_provider.dart';
 import 'package:ecommerce_app/onBoard.dart';
+import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/signUp.dart';
 import 'package:ecommerce_app/splashScreen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: showHomeScreen ?  Placeorder() : Splashscreen(),
       home: showHomeScreen ?  Onboard() : Splashscreen(),
     );
   }
