@@ -1,3 +1,5 @@
+import 'package:ecommerce_app/components/customButton.dart';
+import 'package:ecommerce_app/payment.dart';
 import 'package:flutter/material.dart';
 
 class Placeorder extends StatelessWidget {
@@ -15,6 +17,7 @@ class Placeorder extends StatelessWidget {
         ],
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
@@ -249,90 +252,57 @@ class Placeorder extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 40,
+                  height: 30,
                 ),
 
-               // BottomSheet(
-               //     onClosing: onClosing,
-               //     builder: builder)
+
               ],
             ),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (context) => _buildBottomSheet(),
-          );
-        },
-        label: Text("Proceed to Payment"),
-        backgroundColor: Colors.red,
-        icon: Icon(Icons.shopping_bag),
-      ),
-    );
-  }
 
-  Widget _buildBottomSheet() {
-    double orderAmount = 1234.00; // Example order amount
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Order Summary",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(height: 10),
-                  Text("Items: 2"),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "Amount",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "₹$orderAmount",
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            ),
-            onPressed: () {
-              // Add your order confirmation logic here
-            },
-            child: Text(
-              "Confirm Order",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
+          BottomSheet(onClosing: () {
+
+          },
+            builder: (context) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text("amount"),
+                        SizedBox(height: 2,),
+                        Text(
+                          "View Details",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                            decorationColor: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      children: [
+                        Custombutton(
+                          text: "Proceed to Payment",
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return Payment();
+                                },));
+                          },)
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },),
         ],
       ),
+
     );
   }
 }
