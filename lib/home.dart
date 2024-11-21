@@ -1,4 +1,5 @@
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:ecommerce_app/shopPage.dart';
 import 'package:ecommerce_app/trendingProducts.dart';
 import 'package:flutter/material.dart';
 
@@ -132,7 +133,11 @@ class _HomeState extends State<Home> {
                               ),
                               minimumSize: Size(0, 0), // Allows reducing button size
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return Shoppage();
+                              },));
+                            },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
