@@ -4,17 +4,44 @@ import 'package:ecommerce_app/components/pageTitle.dart';
 import 'package:ecommerce_app/components/socialNetworks.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
 import 'package:ecommerce_app/getStarted.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:ecommerce_app/signUp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Login extends StatelessWidget {
+// State provider to manage password visibility
+final passwordVisibilityProvider = StateProvider<bool>((ref) => false);
+
+class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends ConsumerState<Login> {
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController email=TextEditingController();
-    TextEditingController password=TextEditingController();
+    // Watching password visibility state
+    final isPasswordVisible = ref.watch(passwordVisibilityProvider);
 
     return SafeArea(
       child: Scaffold(
@@ -24,75 +51,112 @@ class Login extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Pagetitle(
-                    text1: "Welcome",
-                    text2: "Back!"),
-                SizedBox(
-                  height: 30,
+                const Pagetitle(
+                  text1: "Welcome",
+                  text2: "Back!",
                 ),
-                CustomTextField(
-                  type: TextInputType.emailAddress,
-          
-                    controller: email,
-                    hintText: "Username or Email", 
-                  prefixIcon: Icon(Icons.person,size: 25,),),
-                SizedBox(
-                  height: 30,
-                ),
-                CustomTextField(
-                  
-                    controller: password,
-                    hintText: "Password",
-                    type: TextInputType.visiblePassword,
-                isPassword: true, prefixIcon: Icon(Icons.lock,size: 20,),),
-                SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom:0,left:220, top:0,right: 5),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context, MaterialPageRoute(
-                        builder: (context) {
-                          return Forgotpassword();
-                        },));
-                    },
-                    child: Text("Forgot Password?",
-                      style: TextStyle(
-                       color: Colors.red,
-                       fontSize: 12,
+                const SizedBox(height: 30),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                        type: TextInputType.emailAddress,
+                        validator: (value) =>
+                        value!.isNotEmpty ? null : 'Email cannot be empty',
+                        controller: emailController,
+                        hintText: "Email",
+                        prefixIcon: const Icon(Icons.person, size: 25),
+                      ),
+                      const SizedBox(height: 30),
+                      CustomTextField(
+                        controller: passwordController,
+                        hintText: "Password",
+                        type: TextInputType.visiblePassword,
+                        isPassword: true,
+                        isPasswordVisible: isPasswordVisible,
+                        prefixIcon: const Icon(Icons.lock),
+                        validator: (value) {
+                          if( value!.isNotEmpty) {
+                            if( value!.length<=10 && value!.length>=16) {
+                              return 'Password should be between 10 to 16 characters only';
+                            }
+                          }
+                          else{
+                            return 'Please enter your password again';
+                          }
+                        },
+                        onTogglePasswordVisibility: () {
+                          ref
+                              .read(passwordVisibilityProvider.notifier)
+                              .state = !isPasswordVisible;
+                        },
+                      ),
+                      const SizedBox(height: 5),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>  Forgotpassword(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 60),
+                      Custombutton(
+                        text: "Login",
+                        onPressed: () async {
 
-                      )),
+                          if(_formKey.currentState!.validate()){
+                            final authService = ref.read(pocketBaseAuthProvider);
+                            try {
+                              final message = await authService.loginUser(
+                                emailController.text,
+                                passwordController.text,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>  Getstarted(),
+                                ),
+                              );
+                            } catch (e) {
+                              print(e.toString());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Login Failed! Email or password is incorrect")),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(
-                  height: 60,
-                ),
-                Custombutton(
-                    text: "Login",
-                    onPressed: () {
-                        Navigator.push(
-                            context, MaterialPageRoute(builder: (context) {
-                              return Getstarted();
-                            },));
-                    },
-                ),
-                SizedBox(
-                  height: 100,
-                ),
+
+                const SizedBox(height: 100),
                 Socialnetworks(
-                    onPressed: () {
-                      Navigator.push(
-                          context, MaterialPageRoute(
-                        builder: (context) {
-                          return Signup();
-                        },));
-                    },
-                    text1: "Create An Account ",
-                    text2: "Sign Up")
-          
-          
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>  Signup(),
+                      ),
+                    );
+                  },
+                  text1: "Create An Account ",
+                  text2: "Sign Up",
+                ),
               ],
             ),
           ),

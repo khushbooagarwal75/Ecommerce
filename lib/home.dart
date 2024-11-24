@@ -1,18 +1,20 @@
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:ecommerce_app/shopPage.dart';
 import 'package:ecommerce_app/trendingProducts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Home extends StatefulWidget {
+
+class Home extends ConsumerWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
-}
+  Widget build(BuildContext context,WidgetRef ref) {
+    final categoryValue = ref.watch(categoryProvider);
+    final productsAsyncValue = ref.watch(productsProvider);
 
-class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
+
     return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.grey.withOpacity(0.2),
@@ -54,34 +56,47 @@ class _HomeState extends State<Home> {
               height: 20,
             ),
 
-            Row(
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.red.shade300),
-                        color: Colors.transparent,
-                      ),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.red.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset("assets/images/cartify.png"),
+            categoryValue.when(
+              data: (categories) {
+                return Row(
+                  children: categories.map((category) {
+                    return Row(
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.red.shade300),
+                                color: Colors.transparent,
+                              ),
+                              child: CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Colors.red.withOpacity(0.1),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Image.network(
+                                    category.getImageUrl(getBaseUrl()), // Assuming Category has an `imageUrl` field
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text("data")
-                  ],
-                )
-              ],
+                            Text(category.category_name), // Assuming Category has a `name` field
+                          ],
+                        ),
+                        SizedBox(width: 10,),
+                      ],
+                    );
+                  }).toList(),
+
+                );
+              },
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(child: Text('Error: $err')),
             ),
+
+
             SizedBox(
               height: 10,
             ),
@@ -135,7 +150,7 @@ class _HomeState extends State<Home> {
                             ),
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return Shoppage();
+                                return Trendingproducts();
                               },));
                             },
                             child: Row(
@@ -223,6 +238,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
 
+
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
@@ -265,25 +281,117 @@ class _HomeState extends State<Home> {
             SizedBox(
               height: 10,
             ),
+
             Row(
               children: [
-                Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset(
-                        "assets/images/cartify.png",
-                        width: 100,
-                        height: 100,
+                Expanded(
+                  child: productsAsyncValue.when(
+                    data: (products) {
+                      return SizedBox(
+                        height: 200, // Adjust height for horizontal list
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: products.length,
+                          itemBuilder: (context, index) {
+                            final product = products[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                      return Shoppage(
+                                        name: product.product_name,
+                                        size: product.product_name ,
+                                        details: product.product_desc,
+                                        imageUrl: product.getImageUrl(getBaseUrl()),
+                                        price: product.product_price,
+                                      );
+                                    },));
+                                },
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    width: 150, // Adjust width of each product card
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(10.0),
+                                            ),
+                                            child: Image.network(
+                                              product.getImageUrl(getBaseUrl()),
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) =>
+                                                  Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) return child;
+                                                return Center(
+                                                  child: CircularProgressIndicator(),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                product.product_name,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                product.product_desc,
+                                                style: TextStyle(color: Colors.grey),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                'Rs ${product.product_price.toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    loading: () => Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(
+                      child: Text(
+                        'Something went wrong. Please try again later.',
+                        style: TextStyle(color: Colors.red),
                       ),
-                      Text("Products \ndetails \nprice "),
-                      Text("price 20%off"),
-                      Text("Rating")
-                    ],
+                    ),
                   ),
                 ),
               ],
             ),
+
             SizedBox(
               height: 20,
             ),
@@ -464,18 +572,111 @@ class _HomeState extends State<Home> {
             ),
             Row(
               children: [
-                Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset(
-                        "assets/images/cartify.png",
-                        width: 100,
-                        height: 100,
+                Expanded(
+                  child: productsAsyncValue.when(
+                    data: (products) {
+                      return SizedBox(
+                        height: 200, // Adjust height for horizontal list
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: products.length,
+                          itemBuilder: (context, index) {
+                            final product = products[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return Shoppage(
+                                          name: product.product_name,
+                                          size: product.product_name ,
+                                          details: product.product_desc,
+                                          imageUrl: product.getImageUrl(getBaseUrl()),
+                                          price: product.product_price,
+                                        );
+                                      },));
+                                },
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    width: 150, // Adjust width of each product card
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(10.0),
+                                            ),
+                                            child: Image.network(
+                                              product.getImageUrl(getBaseUrl()),
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) =>
+                                                  Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) return child;
+                                                return Center(
+                                                  child: CircularProgressIndicator(),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                product.product_name,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                product.product_desc,
+                                                style: TextStyle(color: Colors.grey),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                'Rs ${product.product_price.toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+
+                        ),
+                      );
+                    },
+                    loading: () => Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(
+                      child: Text(
+                        'Something went wrong. Please try again later.',
+                        style: TextStyle(color: Colors.red),
                       ),
-                      Text("Products \nprice "),
-                      Text("price 20%off"),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -566,8 +767,8 @@ class _HomeState extends State<Home> {
                       ),
                       IconButton(
                           onPressed: () {
-                            
-                          }, 
+
+                          },
                           icon: Icon(Icons.arrow_forward_ios))
                     ],
                   ),

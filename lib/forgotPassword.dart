@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 class Forgotpassword extends StatelessWidget {
   TextEditingController email=TextEditingController();
-   Forgotpassword({super.key});
+  final _formKey = GlobalKey<FormState>();
+  Forgotpassword({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,41 +24,57 @@ class Forgotpassword extends StatelessWidget {
                 SizedBox(
                   height: 30,
                 ),
-                CustomTextField(
-                  type: TextInputType.emailAddress,
-                  controller: email,
-                  hintText: "Enter your Email Address",
-                  prefixIcon: Icon(Icons.email_sharp,size: 20,),),
-                SizedBox(
-                  height: 30,
-                ),
-                RichText(
-                    text: TextSpan(
-                        children: [
-                          TextSpan(text: "* ",
-                              style:TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.red
-                              ) ),
-                          TextSpan(text: "We will send you a message to set or reset your new password ",
-                              style:TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey
-                              ) ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                        type: TextInputType.emailAddress,
+                        controller: email,
+                        hintText: "Enter your Email Address",
+                        prefixIcon: Icon(Icons.email_sharp,size: 20,),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter email';
+                          }
+                          return null;
+                        }
+                                ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              children: [
+                                TextSpan(text: "* ",
+                                    style:TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.red
+                                    ) ),
+                                TextSpan(text: "We will send you a message to set or reset your new password ",
+                                    style:TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey
+                                    ) ),
 
-                        ]
-                    )
-                ),
-                SizedBox(
-                  height: 60,
-                ),
-                Custombutton(
-                    text: "Submit",
-                    onPressed: () {
+                              ]
+                          )
+                      ),
+                      SizedBox(
+                        height: 60,
+                      ),
+                      Custombutton(
+                        text: "Submit",
+                        onPressed: () {
+                          if(_formKey.currentState!.validate()){
+                            print("buttton clicked");
+                          }
 
-                    },
-                )
-
+                        },
+                      )
+                    ],
+                  ),
+                ),
 
 
               ],

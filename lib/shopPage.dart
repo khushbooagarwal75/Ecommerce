@@ -1,14 +1,23 @@
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:ecommerce_app/checkout.dart';
+import 'package:ecommerce_app/placeOrder.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Shoppage extends StatelessWidget {
-  const Shoppage({super.key});
+  final String imageUrl; // URL for product image
+  final String name; // Product name
+  final String size; // Product size
+  final String details; // Product details
+  final double price;
+  const Shoppage({super.key, required this.imageUrl, required this.name, required this.size, required this.details, required this.price});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
+
         automaticallyImplyLeading: false,
         leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios_new_outlined)),
         actions: [
@@ -22,7 +31,7 @@ class Shoppage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset("assets/images/cartify.png",),
+          Image.network(imageUrl),
           Center(
             child: DotsIndicator(
                 dotsCount: 4,
@@ -32,23 +41,34 @@ class Shoppage extends StatelessWidget {
 
             ),
           ),
-          Text("Size: 7UK"),
-          Card(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Text(
+                  "Size: ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+            Card(
 
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("6UK",
-              style: TextStyle(
-                color: Colors.red,
-                fontSize:10
-              ),),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(size,
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontSize:10
+                  ),),
+              ),
+
+              shape: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red)
+              ),
             ),
-
-            shape: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red)
+              ],
             ),
           ),
-          Text("Product Details"),
+
+          Text(details),
           SizedBox(
             height: 10,
           ),
@@ -67,7 +87,10 @@ class Shoppage extends StatelessWidget {
                     ),
                   ),
                   onPressed: (){
-
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return Checkout();
+                      },));
                   },
                   child: Row(
                     children: [
@@ -100,7 +123,16 @@ class Shoppage extends StatelessWidget {
                     ),
                   ),
                   onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return Placeorder(
+                              name: name,
+                              price: price,
+                              imageUrl: imageUrl,
+                              description: details,
 
+                            );
+                          },));
                   },
                   child: Row(
                     children: [
@@ -130,3 +162,4 @@ class Shoppage extends StatelessWidget {
     );
   }
 }
+

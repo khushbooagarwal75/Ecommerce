@@ -94,9 +94,9 @@ class _MenuState extends State<Menu> {
             left: MediaQuery.of(context).size.width / 2 - 28, // Centers the button
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return Placeorder();
-                },));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return Placeorder();
+                // },));
               },
               child: Icon(Icons.shopping_cart),
             ),

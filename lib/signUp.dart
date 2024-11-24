@@ -3,16 +3,39 @@ import 'package:ecommerce_app/components/customTextField.dart';
 import 'package:ecommerce_app/components/pageTitle.dart';
 import 'package:ecommerce_app/components/socialNetworks.dart';
 import 'package:ecommerce_app/login.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+final passwordVisibilityProvider = StateProvider<bool>((ref) => false);
+final confirmPasswordVisibilityProvider = StateProvider<bool>((ref) => false);
 
-class Signup extends StatelessWidget {
-  TextEditingController reg_email=TextEditingController();
-  TextEditingController reg_password=TextEditingController();
-  TextEditingController confirmPassword=TextEditingController();
-   Signup({super.key});
+class Signup extends ConsumerStatefulWidget {
+  const Signup({super.key});
+
+  @override
+  _SignupState createState() => _SignupState();
+}
+
+class _SignupState extends ConsumerState<Signup> {
+  TextEditingController reg_email = TextEditingController();
+  TextEditingController reg_password = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
+  final _formKey=GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    reg_email.dispose();
+    reg_password.dispose();
+    confirmPassword.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Watching password visibility state for both fields
+    final isPasswordVisible = ref.watch(passwordVisibilityProvider);
+    final isConfirmPasswordVisible = ref.watch(confirmPasswordVisibilityProvider); // Consider separate state for confirmPassword if needed
+
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -27,65 +50,134 @@ class Signup extends StatelessWidget {
                 SizedBox(
                   height: 30,
                 ),
-                CustomTextField(
-                  type: TextInputType.emailAddress,
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(
+                        type: TextInputType.emailAddress,
+                        controller: reg_email,
+                        hintText: "Username or Email",
+                        prefixIcon: Icon(Icons.person,size: 25,),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter email';
+                        }
+                        return null;
+                      },),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      CustomTextField(
+                        controller: reg_password,
+                        hintText: "Password",
+                        type: TextInputType.visiblePassword,
+                        isPassword: true,
+                        isPasswordVisible: isPasswordVisible,
+                        prefixIcon: const Icon(Icons.lock),
+                        validator: (value) {
+                          if( value!.isNotEmpty) {
+                            if( value!.length<=10 && value!.length>=16) {
+                              return 'Password should be between 10 to 16 characters only';
+                            }
+                          }
+                          else{
+                            return 'Please enter your password again';
+                          }
+                        },
+                        onTogglePasswordVisibility: () {
+                          ref
+                              .read(passwordVisibilityProvider.notifier)
+                              .state = !isPasswordVisible;
+                        },
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      CustomTextField(
+                        controller: confirmPassword,
+                        hintText: "Password",
+                        type: TextInputType.visiblePassword,
+                        isPassword: true,
+                        isPasswordVisible: isConfirmPasswordVisible,
+                        prefixIcon: const Icon(Icons.lock),
+                        validator: (value) {
+                          if( value!.isNotEmpty) {
+                            if(value!.length<=10 && value!.length>=16) {
+                              return 'Password should be between 10 to 16 characters only';
+                            }
+                          }
+                          else{
+                            return 'Please enter your password again';
+                          }
+                        },
+                        onTogglePasswordVisibility: () {
+                          ref
+                              .read(confirmPasswordVisibilityProvider.notifier)
+                              .state = !isConfirmPasswordVisible;
+                        },
+                      ),
 
-                  controller: reg_email,
-                  hintText: "Username or Email",
-                  prefixIcon: Icon(Icons.person,size: 25,),),
-                SizedBox(
-                  height: 30,
+                      SizedBox(
+                        height: 20,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              children: [
+                                TextSpan(text: "By Clicking the ",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+
+                                  ),),
+                                TextSpan(text: "Register ",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+
+                                  ),),
+                                TextSpan(text: "button, you agree \nto the terms & conditions",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+
+                                  ),),
+                              ]
+                          )),
+                      SizedBox(
+                        height: 40,
+                      ),
+
+                      Custombutton(
+                        text: "Create Account",
+                        onPressed: () async {
+                          if(_formKey.currentState!.validate()){
+                            final authService = ref.read(pocketBaseAuthProvider);
+                            try {
+                              final message = await authService.registerUser(
+                                reg_email.text,
+                                reg_password.text,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>  Login(),
+                                ),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User Registeration Failed!!")));
+
+                            }
+                          }
+
+
+                        },),
+                    ],
+                  ),
                 ),
-                CustomTextField(
 
-                  controller: reg_password,
-                  hintText: "Password",
-                  type: TextInputType.visiblePassword,
-                  isPassword: true, prefixIcon: Icon(Icons.lock,size: 20,),),
-                SizedBox(
-                  height: 30,
-                ),
-                CustomTextField(
-
-                  controller: reg_password,
-                  hintText: "ConfirmPassword",
-                  type: TextInputType.visiblePassword,
-                  isPassword: true, prefixIcon: Icon(Icons.lock,size: 20,),),
-                SizedBox(
-                  height: 20,
-                ),
-                RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(text: "By Clicking the ",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-
-                            ),),
-                        TextSpan(text: "Register ",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-
-                          ),),
-                        TextSpan(text: "button, you agree \nto the terms & conditions",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-
-                          ),),
-                      ]
-                    )),
-                SizedBox(
-                  height: 40,
-                ),
-
-                Custombutton(
-                    text: "Create Account",
-                    onPressed: () {
-
-                    },),
                 SizedBox(
                   height: 80,
                 ),
@@ -107,6 +199,7 @@ class Signup extends StatelessWidget {
           ),
         ),
       ),
+
     );
   }
 }

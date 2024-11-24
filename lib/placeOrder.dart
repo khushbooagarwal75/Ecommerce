@@ -3,7 +3,11 @@ import 'package:ecommerce_app/payment.dart';
 import 'package:flutter/material.dart';
 
 class Placeorder extends StatelessWidget {
-  const Placeorder({super.key});
+  final String imageUrl;
+  final String name;
+  final String description;
+  final double price;
+  const Placeorder({super.key, required this.imageUrl, required this.name, required this.description, required this.price});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +32,8 @@ class Placeorder extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Image.asset(
-                        "assets/images/cartify.png",
+                      Image.network(
+                        imageUrl,
                         width: 120,
                       ),
                       Padding(
@@ -37,7 +41,7 @@ class Placeorder extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              "Women's Casual Wear",
+                              name,
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.bold),
                             ),
@@ -45,7 +49,7 @@ class Placeorder extends StatelessWidget {
                               height: 5,
                             ),
                             Text(
-                              "Description",
+                              description,
                               style: TextStyle(fontSize: 10),
                             ),
                             SizedBox(
@@ -219,7 +223,7 @@ class Placeorder extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        "amount",
+                        price.toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],

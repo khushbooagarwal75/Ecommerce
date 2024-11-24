@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   dots_indicator: ^3.0.0
   flutter_riverpod: ^2.6.1
+  flutter_secure_storage: ^9.2.2
+  http: ^1.2.2
+  pocketbase: ^0.18.1
 
 
 dev_dependencies:
