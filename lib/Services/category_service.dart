@@ -1,22 +1,22 @@
-import 'dart:convert';
 import 'package:ecommerce_app/model/category_model.dart';
-import 'package:http/http.dart' as http;
-
+import 'package:pocketbase/pocketbase.dart';
 
 class CategoryService {
-  final String baseUrl;
+  final PocketBase client;
 
-  CategoryService(this.baseUrl);
+  // Constructor to initialize with the PocketBase client
+  CategoryService(this.client);
 
+  // Fetch categories using PocketBase API
   Future<List<Category>> fetchCategories() async {
-  final url = Uri.parse('$baseUrl/api/collections/categories/records');
-  final response = await http.get(url);
+    try {
+      // Fetch the list of categories from the 'categories' collection
+      final result = await client.collection('categories').getList();
 
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body)['items'];
-    return data.map((json) => Category.fromJson(json)).toList();
-  } else {
-    throw Exception('Failed to load categories: ${response.body}');
+      // Map the response items to Category model
+      return result.items.map((item) => Category.fromJson(item.toJson())).toList();
+    } catch (e) {
+      throw Exception('Failed to load categories: $e');
+    }
   }
-}
 }

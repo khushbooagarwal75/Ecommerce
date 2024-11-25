@@ -125,7 +125,7 @@ class _LoginState extends ConsumerState<Login> {
                                 emailController.text,
                                 passwordController.text,
                               );
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>  Getstarted(),

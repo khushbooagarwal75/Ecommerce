@@ -145,7 +145,7 @@ class _OnboardState extends State<Onboard> {
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        Navigator.push(context, MaterialPageRoute(
+                        Navigator.pushReplacement(context, MaterialPageRoute(
                           builder: (context) {
                             return Login();
                           },

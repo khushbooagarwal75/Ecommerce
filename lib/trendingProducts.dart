@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/provider/provider.dart';
+import 'package:ecommerce_app/shopPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +9,7 @@ class Trendingproducts extends ConsumerWidget {
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     final productsAsyncValue = ref.watch(productsProvider);
+    final productService = ref.read(productServiceProvider);
     return SafeArea(
         child: Scaffold(
 
@@ -75,51 +77,62 @@ class Trendingproducts extends ConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 itemBuilder: (context, index) {
                   final product = products[index];
-                  return Card(
-                    elevation: 4,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(4.0)),
-                            child: Image.network(
-                              product.getImageUrl(getBaseUrl()),
-                              width: double.infinity,
-                              fit: BoxFit.cover,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return Shoppage(
+                            id: product.id,
+                            productService: productService,
+                          );
+                        },));
+                    },
+                    child: Card(
+                      elevation: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(4.0)),
+                              child: Image.network(
+                                product.getImageUrl(getBaseUrl() as String),
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                product.product_name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.product_name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                product.product_desc,
-                                style: TextStyle(color: Colors.grey),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Rs ${product.product_price.toStringAsFixed(2)}',
-                                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                                SizedBox(height: 4),
+                                Text(
+                                  product.product_desc,
+                                  style: TextStyle(color: Colors.grey),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Rs ${product.product_price.toStringAsFixed(2)}',
+                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },

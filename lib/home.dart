@@ -1,4 +1,5 @@
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:ecommerce_app/shopPage.dart';
 import 'package:ecommerce_app/trendingProducts.dart';
@@ -13,6 +14,7 @@ class Home extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     final categoryValue = ref.watch(categoryProvider);
     final productsAsyncValue = ref.watch(productsProvider);
+    final productService = ref.read(productServiceProvider);
 
 
     return SafeArea(
@@ -76,7 +78,7 @@ class Home extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Image.network(
-                                    category.getImageUrl(getBaseUrl()), // Assuming Category has an `imageUrl` field
+                                    category.getImageUrl(getBaseUrl() as String), // Assuming Category has an `imageUrl` field
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -300,11 +302,8 @@ class Home extends ConsumerWidget {
                                 onTap: () {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) {
                                       return Shoppage(
-                                        name: product.product_name,
-                                        size: product.product_name ,
-                                        details: product.product_desc,
-                                        imageUrl: product.getImageUrl(getBaseUrl()),
-                                        price: product.product_price,
+                                        id: product.id,
+                                        productService: productService,
                                       );
                                     },));
                                 },
@@ -324,7 +323,7 @@ class Home extends ConsumerWidget {
                                               top: Radius.circular(10.0),
                                             ),
                                             child: Image.network(
-                                              product.getImageUrl(getBaseUrl()),
+                                              product.getImageUrl(getBaseUrl() as String),
                                               width: double.infinity,
                                               fit: BoxFit.cover,
                                               errorBuilder: (context, error, stackTrace) =>
@@ -589,11 +588,8 @@ class Home extends ConsumerWidget {
                                   Navigator.push(context, MaterialPageRoute(
                                       builder: (context) {
                                         return Shoppage(
-                                          name: product.product_name,
-                                          size: product.product_name ,
-                                          details: product.product_desc,
-                                          imageUrl: product.getImageUrl(getBaseUrl()),
-                                          price: product.product_price,
+                                          id: product.id,
+                                          productService: productService,
                                         );
                                       },));
                                 },
@@ -613,7 +609,7 @@ class Home extends ConsumerWidget {
                                               top: Radius.circular(10.0),
                                             ),
                                             child: Image.network(
-                                              product.getImageUrl(getBaseUrl()),
+                                              product.getImageUrl(getBaseUrl() as String),
                                               width: double.infinity,
                                               fit: BoxFit.cover,
                                               errorBuilder: (context, error, stackTrace) =>

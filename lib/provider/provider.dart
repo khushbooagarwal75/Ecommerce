@@ -1,70 +1,53 @@
-// import 'package:ecommerce_app/Services/auth_service.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-//
-// // Initialize the PocketBase service
-// final pocketBaseAuthProvider = Provider(
-//         (ref) => PocketBaseAuthService('http://10.0.2.2:8090/_/#/'),
-// );
-//
-// // User authentication state provider
-// final userAuthStateProvider = StateProvider<bool>((ref) => false);
-
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:ecommerce_app/Services/auth_service.dart';
 import 'package:ecommerce_app/Services/category_service.dart';
 import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/model/category_model.dart';
 import 'package:ecommerce_app/model/product_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Determine the appropriate base URL based on the platform
+// Determine the appropriate base URL
 String getBaseUrl() {
-  switch (Platform.operatingSystem) {
-    case 'android':
-      return 'http://10.0.2.2:8090';
-    case 'ios':
-      return 'http://127.0.0.1:8090';
-    default:
-      return 'http://127.0.0.1:8090';
-  }
+  return 'http://192.168.38.32:8090';
 }
 
-// PocketBase Service Provider
-final pocketBaseAuthProvider = Provider(
-      (ref) => PocketBaseAuthService(getBaseUrl()),
-);
+// Initialize PocketBase client
+final pocketBaseClientProvider = Provider((ref) => PocketBase(getBaseUrl()));
 
+// Authentication Provider
+final pocketBaseAuthProvider = Provider((ref) {
+  final client = ref.read(pocketBaseClientProvider);
+  return PocketBaseAuthService(client); // Ensure this class expects a `PocketBase` instance.
+});
 
 // Registration Provider
-final registerUserProvider = FutureProvider.family<void, Map<String, String>>((ref, credentials) {
+final registerUserProvider = FutureProvider.family<void, Map<String, String>>((ref, credentials) async {
   final authService = ref.read(pocketBaseAuthProvider);
-  return authService.registerUser(credentials['email']!, credentials['password']!);
+  await authService.registerUser(credentials['email']!, credentials['password']!);
 });
 
 // Login Provider
-final loginUserProvider = FutureProvider.family<void, Map<String, String>>((ref, credentials) {
+final loginUserProvider = FutureProvider.family<void, Map<String, String>>((ref, credentials) async {
   final authService = ref.read(pocketBaseAuthProvider);
-  return authService.loginUser(credentials['email']!, credentials['password']!);
+  await authService.loginUser(credentials['email']!, credentials['password']!);
 });
 
-
-final pocketBaseServiceProvider = Provider(
-      (ref) => PocketBaseService(getBaseUrl()),
-);
-
+// Products Provider
 final productsProvider = FutureProvider<List<Product>>((ref) async {
-  final service = ref.watch(pocketBaseServiceProvider);
+  final client = ref.read(pocketBaseClientProvider);
+  final service = ProductService(client);
   return await service.fetchProducts();
 });
 
-final categoryServiceProvider = Provider(
-      (ref) => CategoryService(getBaseUrl()),
-);
-
+// Category Provider
 final categoryProvider = FutureProvider<List<Category>>((ref) async {
-  final categoryService = ref.watch(categoryServiceProvider);
-  return await categoryService.fetchCategories();
+  final client = ref.read(pocketBaseClientProvider);
+  final service = CategoryService(client);
+  return await service.fetchCategories();
 });
 
-
-
+final productServiceProvider = Provider<ProductService>((ref) {
+  final client = ref.read(pocketBaseClientProvider); // Get the PocketBase client
+  return ProductService(client); // Create and return the ProductService instance
+});

@@ -80,7 +80,7 @@ class Getstarted extends StatelessWidget {
                        child: Custombutton(
                            text: "Get Started",
                            onPressed: () {
-                             Navigator.push(
+                             Navigator.pushReplacement(
                                  context, MaterialPageRoute(builder: (context) {
                                    return Menu();
                                  },));

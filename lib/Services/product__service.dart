@@ -1,23 +1,30 @@
-import 'dart:convert';
 import 'package:ecommerce_app/model/product_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:pocketbase/pocketbase.dart';
 
+class ProductService {
+  final PocketBase client;
 
-class PocketBaseService {
-  final String baseUrl;
+  // Constructor accepting the PocketBase client
+  ProductService(this.client);
 
-  PocketBaseService(this.baseUrl);
-
+  // Fetch products using the PocketBase API
   Future<List<Product>> fetchProducts() async {
-    final url = Uri.parse('$baseUrl/api/collections/products/records');
-    final response = await http.get(url);
+    try {
+      // Fetch the list of products from the 'products' collection
+      final result = await client.collection('products').getList();
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['items'];
-      return data.map((json) => Product.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load products: ${response.body}');
+      // Map the response items to Product model
+      return result.items.map((item) => Product.fromJson(item.toJson())).toList();
+    } catch (e) {
+      throw Exception('Failed to load products: $e');
+    }
+  }
+  Future<Product> fetchProductById(String id) async {
+    try {
+      final record = await client.collection('products').getOne(id);
+      return Product.fromJson(record.toJson());
+    } catch (e) {
+      throw Exception('Failed to load product: $e');
     }
   }
 }
-

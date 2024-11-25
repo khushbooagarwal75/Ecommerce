@@ -159,13 +159,13 @@ class _SignupState extends ConsumerState<Signup> {
                                 reg_email.text,
                                 reg_password.text,
                               );
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>  Login(),
                                 ),
                               );
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User Registered")));
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User Registeration Failed!!")));
 

@@ -1,13 +1,14 @@
+import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
+import 'package:ecommerce_app/model/product_model.dart';
 import 'package:ecommerce_app/payment.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 
-class Placeorder extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String description;
-  final double price;
-  const Placeorder({super.key, required this.imageUrl, required this.name, required this.description, required this.price});
+  class Placeorder extends StatelessWidget {
+  final String id;
+  final ProductService productService;
+  const Placeorder({super.key, required this.id, required this.productService});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,19 @@ class Placeorder extends StatelessWidget {
           IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border))
         ],
       ),
-      body: Column(
+      body: FutureBuilder<Product>(
+        future: productService.fetchProductById(id),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data == null) {
+        return Center(child: Text('Product not found.'));
+      }
+
+      final product = snapshot.data!;
+      return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -33,44 +46,46 @@ class Placeorder extends StatelessWidget {
                   Row(
                     children: [
                       Image.network(
-                        imageUrl,
-                        width: 120,
+                        product.getImageUrl(getBaseUrl()),
+                        width: 100,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              name,
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              description,
-                              style: TextStyle(fontSize: 10),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            RichText(
-                                text: TextSpan(children: [
-                              TextSpan(
-                                text: "Delivery by  ",
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                product.product_name,
                                 style: TextStyle(
-                                    fontSize: 10, color: Colors.black),
+                                    fontSize: 14, fontWeight: FontWeight.bold),
                               ),
-                              TextSpan(
-                                text: "Delivery by",
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
+                              SizedBox(
+                                height: 5,
                               ),
-                            ]))
-                          ],
+                              Text(
+                                product.product_desc,
+                                style: TextStyle(fontSize: 10),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                      text: "Delivery by  ",
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.black),
+                                    ),
+                                    TextSpan(
+                                      text: "Delivery by",
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ]))
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -223,7 +238,7 @@ class Placeorder extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        price.toString(),
+                        product.product_price.toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -274,7 +289,7 @@ class Placeorder extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                        Text("amount"),
+                        Text(product.product_price.toString()),
                         SizedBox(height: 2,),
                         Text(
                           "View Details",
@@ -295,7 +310,9 @@ class Placeorder extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                                  return Payment();
+                                  return Payment(
+                                      id: product.id,
+                                      productService: productService);
                                 },));
                           },)
                       ],
@@ -305,8 +322,9 @@ class Placeorder extends StatelessWidget {
               );
             },),
         ],
-      ),
-
+      );
+    }
+    ),
     );
   }
 }
