@@ -60,7 +60,7 @@ class _OnboardState extends State<Onboard> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context, MaterialPageRoute(
                         builder: (context) {
                           return Login();

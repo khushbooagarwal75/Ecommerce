@@ -1,30 +1,50 @@
 import 'package:ecommerce_app/checkout.dart';
-import 'package:ecommerce_app/home.dart';
+import 'package:ecommerce_app/navigationMenuPages/home.dart';
+import 'package:ecommerce_app/login.dart';
+import 'package:ecommerce_app/navigationMenuPages/wishlist.dart';
 import 'package:ecommerce_app/placeOrder.dart';
-import 'package:ecommerce_app/profile.dart';
-import 'package:ecommerce_app/trendingProducts.dart';
+import 'package:ecommerce_app/navigationMenuPages/profile.dart';
+import 'package:ecommerce_app/provider/provider.dart';
+import 'package:ecommerce_app/trendingProducts.dart'; // Import wishlist screen (replace Text widget)
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Menu extends StatefulWidget {
+class Menu extends ConsumerStatefulWidget {
   const Menu({super.key});
 
   @override
-  State<Menu> createState() => _MenuState();
+  _MenuState createState() => _MenuState();
 }
 
-class _MenuState extends State<Menu> {
-  int _currentIndex = 0; // Tracks the selected index of the bottom navigation bar
-
-  // Screens for each navigation item
-  final List<Widget> _pages = [
-    Home(),
-   Text("wishlist"),
- Text("Search"),
-    Text('Settings'),
-  ];
-
+class _MenuState extends ConsumerState<Menu> {
+  int _currentIndex = 0;  // Tracks the selected index of the bottom navigation bar
+  String? userEmail;// Watch the user ID from Riverpod (using the userIdProvider)
+  late SharedPreferences sp;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadUserData();
+  }
+  Future<void> loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userEmail = prefs.getString('userEmail');
+    });
+  }
   @override
   Widget build(BuildContext context) {
+
+
+    // Screens for each navigation item
+    final List<Widget> _pages = [
+      Home(),
+      Wishlist(),  // Replace the placeholder with the actual wishlist screen
+      Text("Search"),  // Placeholder, replace with search functionality
+      Profile(),  // Placeholder, replace with settings functionality
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Cartify"),
@@ -32,20 +52,23 @@ class _MenuState extends State<Menu> {
         automaticallyImplyLeading: false,
         leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
         actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
+          TextButton(onPressed: () async{
+            if(userEmail == null){
+              await sp.setBool("isLoggedIn",false);
+              Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (context) {
-                    return Profile();
+                    return Login();
                   },));
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset("assets/images/cartify.png"),
-            ),
+            }
+            else{
+              _showLogoutConfirmationDialog(context, _logout);
+            }
+          },
+              child: userEmail == null
+                  ? const Text('No user is logged in.')
+                  : Text(userEmail!),
           )
+
         ],
       ),
       body: _pages[_currentIndex], // Display the selected page
@@ -59,7 +82,6 @@ class _MenuState extends State<Menu> {
                 _currentIndex = index; // Update the current index on tap
               });
             },
-
             showUnselectedLabels: true,
             showSelectedLabels: true,
             selectedItemColor: Colors.black,
@@ -69,41 +91,58 @@ class _MenuState extends State<Menu> {
             type: BottomNavigationBarType.fixed,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home,color: Colors.black,),
+                icon: Icon(Icons.home, color: Colors.black),
                 label: "Home",
-
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.favorite,color: Colors.black,),
+                icon: Icon(Icons.favorite, color: Colors.black),
                 label: "Wishlist",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search,color: Colors.black,),
-                label: "Search",
+                icon: Icon(Icons.shopping_cart, color: Colors.black),
+                label: "Orders",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person,color: Colors.black,),
-                label: "Setting",
+                icon: Icon(Icons.person, color: Colors.black),
+                label: "You",
               ),
-
-
             ],
           ),
-          Positioned(
-            top: -28, // Adjusts the button position relative to the bar
-            left: MediaQuery.of(context).size.width / 2 - 28, // Centers the button
-            child: FloatingActionButton(
-              onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return Placeorder();
-                // },));
-              },
-              child: Icon(Icons.shopping_cart),
-            ),
-          ),
         ],
-
       ),
     );
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context, VoidCallback onConfirmLogout) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Log Out"),
+          content: Text("Are you sure you want to log out?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                onConfirmLogout(); // Call the logout function
+              },
+              child: Text("Log Out"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void _logout() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+      return Login();
+    },));
+
   }
 }

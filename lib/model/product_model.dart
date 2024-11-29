@@ -4,6 +4,7 @@ class Product {
   final double product_price;
   final String product_desc;
   final String product_image;
+  final String category_id;
 
   Product({
     required this.id,
@@ -11,6 +12,7 @@ class Product {
     required this.product_price,
     required this.product_desc,
     required this.product_image,
+    required this.category_id,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Product {
       product_price: double.tryParse(json['product_price'].toString()) ?? 0.0,
       product_desc: json['product_desc'] ?? '',
       product_image: json['product_image'] ?? '',
+      category_id: json['category_id'] ?? '',
     );
   }
 

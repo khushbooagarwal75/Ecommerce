@@ -1,5 +1,7 @@
 import 'package:ecommerce_app/Services/product__service.dart';
+import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/model/product_model.dart';
+import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +16,9 @@ class Checkout extends StatelessWidget {
       appBar: AppBar(
         title: Text("Checkout"),
         centerTitle: true,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(onPressed: () {
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios)),
       ),
       body: FutureBuilder<Product>(
           future: productService.fetchProductById(id),
@@ -150,6 +154,18 @@ class Checkout extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Custombutton(
+                        text: "Continue ",
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return Placeorder(
+                                productService: productService,
+                                id: product.id,
+                              );
+                            },
+                          ));
+                        },)
                   ],
                 ),
               ),

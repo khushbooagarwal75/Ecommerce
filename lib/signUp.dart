@@ -62,9 +62,15 @@ class _SignupState extends ConsumerState<Signup> {
                         prefixIcon: Icon(Icons.person,size: 25,),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter email';
+                          return 'Email cannot be empty';
                         }
-                        return null;
+
+                        // Simple email format check
+                        if (!value.contains('@') || !value.contains('.')) {
+                          return 'Enter a valid email address';
+                        }
+
+                        return null; // If the email is valid
                       },),
                       SizedBox(
                         height: 30,
@@ -152,26 +158,36 @@ class _SignupState extends ConsumerState<Signup> {
                       Custombutton(
                         text: "Create Account",
                         onPressed: () async {
-                          if(_formKey.currentState!.validate()){
-                            final authService = ref.read(pocketBaseAuthProvider);
-                            try {
-                              final message = await authService.registerUser(
-                                reg_email.text,
-                                reg_password.text,
-                              );
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>  Login(),
-                                ),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User Registered")));
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User Registeration Failed!!")));
-
+                          if(_formKey.currentState!.validate()) {
+                            if (reg_password.toString() ==
+                                confirmPassword.toString()) {
+                              final authService = ref.read(
+                                  pocketBaseAuthProvider);
+                              try {
+                                final message = await authService.registerUser(
+                                  reg_email.text,
+                                  reg_password.text,
+                                );
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Login(),
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("User Registered")));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(
+                                        "User Registeration Failed!!")));
+                              }
+                            }
+                            else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(
+                                      "Password and confirm Password should be same")));
                             }
                           }
-
 
                         },),
                     ],

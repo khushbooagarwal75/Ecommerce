@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:ecommerce_app/Services/wishlist_service.dart';
+import 'package:ecommerce_app/model/wishlist_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:ecommerce_app/Services/auth_service.dart';
@@ -9,7 +11,8 @@ import 'package:ecommerce_app/model/product_model.dart';
 
 // Determine the appropriate base URL
 String getBaseUrl() {
-  return 'http://192.168.38.32:8090';
+  return 'http://192.168.207.32:8090';
+  // http://192.168.38.32:8090
 }
 
 // Initialize PocketBase client
@@ -51,3 +54,25 @@ final productServiceProvider = Provider<ProductService>((ref) {
   final client = ref.read(pocketBaseClientProvider); // Get the PocketBase client
   return ProductService(client); // Create and return the ProductService instance
 });
+
+final wishlistServiceProvider = Provider<WishlistService>((ref) {
+  final client = ref.read(pocketBaseClientProvider);
+  return WishlistService(client); // Corrected to return WishlistService
+});
+
+// Wishlist Items Provider
+final wishlistProvider = FutureProvider.family<List<WishlistItem>, String>((ref, userId) async {
+  final service = ref.read(wishlistServiceProvider);
+  return await service.getWishlist(userId);
+});
+
+final userIdProvider = StateProvider<String?>((ref) {
+  final authService = ref.read(pocketBaseAuthProvider);
+  return authService.getLoggedInUserId(); // Initialize with the current user ID, if any
+});
+
+final productProviderByCategory = FutureProvider.family<List<Product>, String>((ref, categoryId) async {
+  final productService = ref.read(productServiceProvider); // Fetch the ProductService
+  return await productService.fetchProductsByCategory(categoryId); // Fetch products for the given category ID
+});
+

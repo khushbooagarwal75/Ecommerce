@@ -16,13 +16,14 @@ void main() {
 class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showHomeScreen = ref.watch(navigationProvider);
+    // final showHomeScreen = ref.watch(navigationProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: showHomeScreen ?  Placeorder() : Splashscreen(),
-      home: showHomeScreen ?  Onboard() : Splashscreen(),
+      home: Splashscreen(),
     );
   }
+
 }
 

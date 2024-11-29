@@ -16,7 +16,7 @@ class CategoryService {
       // Map the response items to Category model
       return result.items.map((item) => Category.fromJson(item.toJson())).toList();
     } catch (e) {
-      throw Exception('Failed to load categories: $e');
+      throw Exception('Failed to load categories');
     }
   }
 }

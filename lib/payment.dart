@@ -1,22 +1,27 @@
+import 'package:ecommerce_app/Services/payment_notifier.dart';
 import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
-import 'package:ecommerce_app/home.dart';
+import 'package:ecommerce_app/navigationMenuPages/home.dart';
 import 'package:ecommerce_app/menu.dart';
 import 'package:ecommerce_app/model/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Payment extends StatelessWidget {
+class Payment extends ConsumerWidget {
   final String id;
   final ProductService productService;
   const Payment({super.key, required this.id, required this.productService});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Checkout"),
         centerTitle: true,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(onPressed: () {
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios)),
       ),
       body: FutureBuilder<Product>(
           future: productService.fetchProductById(id),
@@ -113,6 +118,47 @@ class Payment extends StatelessWidget {
                         ],
                       )),
                   SizedBox(
+                    height: 10,
+                  ),
+                  Card(
+                      color: Colors.grey.shade200,
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(
+                              "Cash on delivery",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      )),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Card(
+                      color: Colors.grey.shade200,
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(
+                              "Cash on delivery",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      )),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
                     height: 20,
                   ),
                   Custombutton(
@@ -161,7 +207,7 @@ class Payment extends StatelessWidget {
                           },
                         );
 
-                        await Future.delayed(const Duration(seconds: 15));
+                        await Future.delayed(const Duration(seconds: 2));
                         Navigator.pushReplacement(context, MaterialPageRoute(
                             builder: (context) {
                               return Menu();

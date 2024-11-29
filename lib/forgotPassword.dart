@@ -33,12 +33,18 @@ class Forgotpassword extends StatelessWidget {
                         controller: email,
                         hintText: "Enter your Email Address",
                         prefixIcon: Icon(Icons.email_sharp,size: 20,),
-                        validator: (value) {
+                        validator:(value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter email';
+                            return 'Email cannot be empty';
                           }
-                          return null;
-                        }
+
+                          // Simple email format check
+                          if (!value.contains('@') || !value.contains('.')) {
+                            return 'Enter a valid email address';
+                          }
+
+                          return null; // If the email is valid
+                        },
                                 ),
                       SizedBox(
                         height: 30,

@@ -8,6 +8,7 @@ import 'package:ecommerce_app/provider/provider.dart';
 import 'package:ecommerce_app/signUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // State provider to manage password visibility
 final passwordVisibilityProvider = StateProvider<bool>((ref) => false);
@@ -62,8 +63,18 @@ class _LoginState extends ConsumerState<Login> {
                     children: [
                       CustomTextField(
                         type: TextInputType.emailAddress,
-                        validator: (value) =>
-                        value!.isNotEmpty ? null : 'Email cannot be empty',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email cannot be empty';
+                          }
+
+                          // Simple email format check
+                          if (!value.contains('@') || !value.contains('.')) {
+                            return 'Enter a valid email address';
+                          }
+
+                          return null; // If the email is valid
+                        },
                         controller: emailController,
                         hintText: "Email",
                         prefixIcon: const Icon(Icons.person, size: 25),
@@ -117,22 +128,41 @@ class _LoginState extends ConsumerState<Login> {
                       Custombutton(
                         text: "Login",
                         onPressed: () async {
-
-                          if(_formKey.currentState!.validate()){
+                          if (_formKey.currentState!.validate()) {
                             final authService = ref.read(pocketBaseAuthProvider);
                             try {
-                              final message = await authService.loginUser(
+                              // Attempt login
+                              await authService.loginUser(
                                 emailController.text,
                                 passwordController.text,
                               );
+
+                              // Debugging to check if the login was successful
+                              final loggedInUserId = authService.getLoggedInUserId();
+
+                              // If no user ID, handle the error
+                              if (loggedInUserId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Login failed. No user ID found.")),
+                                );
+                                return;
+                              }
+
+                              // Storing user data in SharedPreferences
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.setString("userEmail", emailController.text);
+                              await prefs.setString("userId", loggedInUserId.toString());
+                              await prefs.setBool("isLoggedIn",true);
+
+                              // Navigating to the next screen
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>  Getstarted(),
+                                  builder: (context) => Getstarted(),
                                 ),
                               );
                             } catch (e) {
-                              print(e.toString());
+                              print('Login Error: $e');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Login Failed! Email or password is incorrect")),
                               );
@@ -140,6 +170,7 @@ class _LoginState extends ConsumerState<Login> {
                           }
                         },
                       ),
+
                     ],
                   ),
                 ),

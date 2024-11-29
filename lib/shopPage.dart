@@ -87,14 +87,7 @@ class Shoppage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return Checkout(
-                              id: product.id,
-                              productService: productService,
-                            );
-                          },
-                        ));
+                        Navigator.pop(context);
                       },
                       child: Row(
                         children: [
@@ -119,9 +112,9 @@ class Shoppage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return Placeorder(
-                            productService: productService,
+                            return Checkout(
                               id: product.id,
+                              productService: productService,
                             );
                           },
                         ));

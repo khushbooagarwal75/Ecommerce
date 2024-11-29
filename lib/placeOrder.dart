@@ -1,24 +1,75 @@
 import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/model/product_model.dart';
+import 'package:ecommerce_app/model/wishlist_model.dart';
 import 'package:ecommerce_app/payment.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-  class Placeorder extends StatelessWidget {
+  class Placeorder extends ConsumerWidget {
   final String id;
   final ProductService productService;
   const Placeorder({super.key, required this.id, required this.productService});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final wishlistService = ref.read(wishlistServiceProvider);
+    final activeUserId = ref.watch(userIdProvider);
+    final wishlistFuture = ref.watch(wishlistProvider(activeUserId!));
+
+    bool isWishlisted = false;
     return Scaffold(
       appBar: AppBar(
         title: Text("Shopping Bag"),
         centerTitle: true,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(onPressed: () {
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios)),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border))
+          wishlistFuture.when(
+            data: (wishlistItems) {
+              final isWishlisted = wishlistItems.any((item) => item.productId == id);
+
+              return IconButton(
+                onPressed: () async {
+                  if (isWishlisted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Item is already in your wishlist."),
+
+                      ),
+                    );
+                    return;
+                  }
+
+                  final wishlistItem = WishlistItem(userId: activeUserId, productId: id);
+
+                  try {
+                    await wishlistService.addToWishlist(wishlistItem);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Item added to wishlist!"),
+
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error adding to wishlist: $e"),
+                      ),
+                    );
+                  }
+                },
+                icon: Icon(
+                  Icons.favorite,
+                  color: isWishlisted ? Colors.red : Colors.grey,
+                ),
+              );
+            },
+            loading: () => CircularProgressIndicator(),
+            error: (error, _) => Icon(Icons.error, color: Colors.red),
+          ),
         ],
       ),
       body: FutureBuilder<Product>(
