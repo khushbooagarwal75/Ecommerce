@@ -126,51 +126,52 @@ class _LoginState extends ConsumerState<Login> {
                       Custombutton(
                         text: "Login",
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final authService =
-                                ref.read(pocketBaseAuthProvider);
-                            try {
-                              await authService.loginUser(
-                                emailController.text,
-                                passwordController.text,
-                              );
+// Navigating to the next screen
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Getstarted(),
+                            ),
+                          );
 
-                              final loggedInUserId =
-                                  authService.getLoggedInUserId();
-                              // If no user ID, handle the error
-                              if (loggedInUserId == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          "Login failed. No user ID found.")),
-                                );
-                                return;
-                              }
-                              // Storing user data in SharedPreferences
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString(
-                                  "userEmail", emailController.text);
-                              await prefs.setString(
-                                  "userId", loggedInUserId.toString());
-                              await prefs.setBool("isLoggedIn", true);
+                          // if (_formKey.currentState!.validate()) {
+                          //   final authService =
+                          //       ref.read(pocketBaseAuthProvider);
+                          //   try {
+                          //     await authService.loginUser(
+                          //       emailController.text,
+                          //       passwordController.text,
+                          //     );
 
-                              // Navigating to the next screen
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Getstarted(),
-                                ),
-                              );
-                            } catch (e) {
-                              print('Login Error: $e');
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        "Login Failed! Email or password is incorrect")),
-                              );
-                            }
-                          }
+                          //     final loggedInUserId =
+                          //         authService.getLoggedInUserId();
+                          //     // If no user ID, handle the error
+                          //     if (loggedInUserId == null) {
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         const SnackBar(
+                          //             content: Text(
+                          //                 "Login failed. No user ID found.")),
+                          //       );
+                          //       return;
+                          //     }
+                          //     // Storing user data in SharedPreferences
+                          //     SharedPreferences prefs =
+                          //         await SharedPreferences.getInstance();
+                          //     await prefs.setString(
+                          //         "userEmail", emailController.text);
+                          //     await prefs.setString(
+                          //         "userId", loggedInUserId.toString());
+                          //     await prefs.setBool("isLoggedIn", true);
+
+                          //   } catch (e) {
+                          //     print('Login Error: $e');
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       const SnackBar(
+                          //           content: Text(
+                          //               "Login Failed! Email or password is incorrect")),
+                          //     );
+                          //   }
+                          // }
                         },
                       ),
                     ],
