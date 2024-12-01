@@ -1,10 +1,14 @@
+import 'package:ecommerce_app/Services/auth_service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/components/customTextField.dart';
 import 'package:ecommerce_app/components/pageTitle.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 class Forgotpassword extends StatelessWidget {
   TextEditingController email=TextEditingController();
+  PocketBaseAuthService auth=PocketBaseAuthService(PocketBase(getBaseUrl()));
   final _formKey = GlobalKey<FormState>();
   Forgotpassword({super.key});
 
@@ -71,18 +75,28 @@ class Forgotpassword extends StatelessWidget {
                       ),
                       Custombutton(
                         text: "Submit",
-                        onPressed: () {
-                          if(_formKey.currentState!.validate()){
-                            print("buttton clicked");
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            // final emailPass = email.text.trim();
+                            // final success = await auth.requestPasswordReset(emailPass);
+                            //
+                            // // Display success or error message
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   SnackBar(
+                            //     content: Text(
+                            //       success
+                            //           ? 'Password reset email sent! Please check your inbox.'
+                            //           : 'Failed to send reset email. Please try again.',
+                            //     ),
+                            //     backgroundColor: success ? Colors.green : Colors.red,
+                            //   ),
+                            // );
                           }
-
                         },
                       )
                     ],
                   ),
                 ),
-
-
               ],
             ),
           ),

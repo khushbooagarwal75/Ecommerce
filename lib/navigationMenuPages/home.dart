@@ -15,6 +15,7 @@ class Home extends ConsumerWidget {
     final categoryValue = ref.watch(categoryProvider);
     final productsAsyncValue = ref.watch(productsProvider);
     final productService = ref.read(productServiceProvider);
+    TextEditingController _searchController = TextEditingController();
 
     return SafeArea(
         child: Scaffold(
@@ -26,6 +27,7 @@ class Home extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
+                      controller: _searchController,
                         decoration: InputDecoration(
                             isDense: true,
                             filled: true,

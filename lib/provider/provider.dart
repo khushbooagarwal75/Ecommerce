@@ -11,8 +11,7 @@ import 'package:ecommerce_app/model/product_model.dart';
 
 // Determine the appropriate base URL
 String getBaseUrl() {
-  return 'http://192.168.207.32:8090';
-  // http://192.168.38.32:8090
+  return 'http://192.168.27.32:8090';
 }
 
 // Initialize PocketBase client

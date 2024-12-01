@@ -159,8 +159,8 @@ class _SignupState extends ConsumerState<Signup> {
                         text: "Create Account",
                         onPressed: () async {
                           if(_formKey.currentState!.validate()) {
-                            if (reg_password.toString() ==
-                                confirmPassword.toString()) {
+                            if (reg_password.text ==
+                                confirmPassword.text) {
                               final authService = ref.read(
                                   pocketBaseAuthProvider);
                               try {

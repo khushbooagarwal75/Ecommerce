@@ -6,13 +6,32 @@ import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Shoppage extends StatelessWidget {
+class Shoppage extends StatefulWidget {
   final String id;
   final ProductService productService;
 
   const Shoppage({super.key, required this.id, required this.productService});
 
+  @override
+  State<Shoppage> createState() => _ShoppageState();
+}
+
+class _ShoppageState extends State<Shoppage> {
+  String? currentUserId;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadUserData();
+  }
+  Future<void> loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentUserId = prefs.getString('userId');
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +48,7 @@ class Shoppage extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<Product>(
-        future: productService.fetchProductById(id),
+        future: widget.productService.fetchProductById(widget.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -110,14 +129,16 @@ class Shoppage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return Checkout(
-                              id: product.id,
-                              productService: productService,
-                            );
-                          },
-                        ));
+                        if(currentUserId!=null){
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return Checkout(
+                                id: product.id,
+                                productService: widget.productService,
+                              );
+                            },
+                          ));
+                        }
                       },
                       child: Row(
                         children: [

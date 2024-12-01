@@ -54,7 +54,6 @@ class _MenuState extends ConsumerState<Menu> {
         actions: [
           TextButton(onPressed: () async{
             if(userEmail == null){
-              await sp.setBool("isLoggedIn",false);
               Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (context) {
                     return Login();
@@ -128,7 +127,9 @@ class _MenuState extends ConsumerState<Menu> {
               child: Text("Cancel"),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async{
+                SharedPreferences prefs= await SharedPreferences.getInstance();
+                await prefs.setBool("isLoggedIn",false);
                 Navigator.of(context).pop(); // Close the dialog
                 onConfirmLogout(); // Call the logout function
               },

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecommerce_app/Services/auth_service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
@@ -6,6 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -22,27 +30,32 @@ class _ProfileState extends ConsumerState<Profile> {
   late TextEditingController accountNo = TextEditingController();
   late TextEditingController accountHolderName = TextEditingController();
   late TextEditingController ifsc = TextEditingController();
+  late TextEditingController name = TextEditingController();
 
   late String dropdownValue = city.first;
   final List<String> city = ["Gujarat", "Maharashtra", "Uttar Pradesh"];
   final PocketBaseAuthService authService =
       PocketBaseAuthService(PocketBase(getBaseUrl()));
   String? currentUserId ;
+  final ImagePicker profilePic= ImagePicker();
+  XFile? _image;
 
   @override
   void initState() {
-
     loadUserData();
     super.initState();
   }
+
   Future<void> loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       currentUserId = prefs.getString('userId');
     });
   }
+
   @override
   void dispose() {
+    name.dispose();
     pincode.dispose();
     address.dispose();
     cityController.dispose();
@@ -56,7 +69,13 @@ class _ProfileState extends ConsumerState<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    Future getImage() async {
+      final XFile? image = await profilePic.pickImage(source: ImageSource.gallery);
 
+      setState(() {
+        _image = image;
+      });
+    }
 
     return Scaffold(
       // appBar: AppBar(
@@ -75,10 +94,28 @@ class _ProfileState extends ConsumerState<Profile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: CircleAvatar(
-                  child: Image.asset("assets/images/google.png"),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                       getImage();
+                      },
+                      child: CircleAvatar(
+                        radius: 60,
+                        child:_image == null? Image.asset("assets/images/user_avatar.png"):
+                        Image.file(File(_image!.path)),
+                      ),
+                    ),
+                    // FloatingActionButton(
+                    //
+                    //   tooltip: 'Pick Image',
+                    //   child: const Icon(Icons.add_a_photo),
+                    // ),
+                  ],
                 ),
-              ),
+    ),
+
+
               SizedBox(
                 height: 10,
               ),
@@ -116,6 +153,39 @@ class _ProfileState extends ConsumerState<Profile> {
               //     ),
               //     keyboardType: TextInputType.emailAddress,
               //     ),
+              Text(
+                "Name",
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextField(
+                controller: name,
+                decoration: InputDecoration(
+                  hintText: "Name",
+                  hintStyle: TextStyle(
+                    fontSize: 13,
+                  ),
+                  isDense: true,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(10)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+
               SizedBox(
                 height: 10,
               ),
@@ -147,9 +217,6 @@ class _ProfileState extends ConsumerState<Profile> {
               //   obscureText: true,
               //   obscuringCharacter: "*",
               // ),
-              SizedBox(
-                height: 10,
-              ),
 
               Padding(
                 padding: const EdgeInsets.only(left: 260.0),
@@ -531,23 +598,24 @@ class _ProfileState extends ConsumerState<Profile> {
                   if (currentUserId != null) {
                     // Collect only the fields you want to update
                     final data = {
-                      "pincode": pincode.text.isNotEmpty
+                      "name":"kdjd",
+                      "avatar":_image!.path,
+                      "pincode":pincode.text.isNotEmpty
                           ? int.tryParse(pincode.text)
                           : null,
-                      "address": address.text.trim(),
-                      "city": cityController.text.trim(),
-                      "state": dropdownValue.trim(),
-                      "country": country.text.trim(),
-                      "accountNo": accountNo.text.trim(),
-                      "accountHolderName": accountHolderName.text.trim(),
-                      "ifscCode": ifsc.text.trim(),
+                      "address":address.text.trim(),
+                      "city":cityController.text.trim(),
+                      "state":dropdownValue.trim(),
+                      "country":country.text.trim(),
+                      "accountNo":accountNo.text.trim(),
+                      "accountHolderName":accountHolderName.text.trim(),
+                      "ifscCode":ifsc.text.trim(),
                     };
                     data.removeWhere(
                         (key, value) => value == null); // Remove null fields
 
                     try {
-                      await authService.updateUser(currentUserId!, data);
-
+                      await authService.updateRecord(currentUserId!, data);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("User information updated!")),
                       );
@@ -566,10 +634,56 @@ class _ProfileState extends ConsumerState<Profile> {
                   }
                 },
               ),
+
+
+              // Custombutton(
+              //   text: "Save",
+              //   onPressed: () async {
+              //     print("Current User ID: $currentUserId");
+              //
+              //     if (currentUserId != null) {
+              //       // Collect and validate the fields to update
+              //       final data = {
+              //         "pincode": pincode.text.isNotEmpty ? int.tryParse(pincode.text) : null,
+              //         "address": address.text.trim(),
+              //         "city": cityController.text.trim(),
+              //         "state": dropdownValue.trim(),
+              //         "country": country.text.trim(),
+              //         "accountNo": accountNo.text.trim(),
+              //         "accountHolderName": accountHolderName.text.trim(),
+              //         "ifscCode": ifsc.text.trim(),
+              //       };
+              //
+              //       // Remove fields with null values
+              //       data.removeWhere((key, value) => value == null);
+              //
+              //       try {
+              //         await authService.updateUser1(currentUserId!, data);
+              //
+              //         // Show success message
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(content: Text("User information updated!")),
+              //         );
+              //       } catch (e) {
+              //         // Show error message
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(content: Text("Error updating user: ${e.toString()}")),
+              //         );
+              //       }
+              //     } else {
+              //       // User not logged in
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         SnackBar(content: Text("User not logged in.")),
+              //       );
+              //     }
+              //   },
+              // ),
+
             ],
           ),
         ),
       ),
     );
   }
+
 }
