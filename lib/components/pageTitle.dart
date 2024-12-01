@@ -7,10 +7,12 @@ class Pagetitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("$text1 \n$text2",
+    return Text(
+      "$text1 \n$text2",
       style: TextStyle(
         fontWeight: FontWeight.w900,
         fontSize: 34,
-      ),);
+      ),
+    );
   }
 }

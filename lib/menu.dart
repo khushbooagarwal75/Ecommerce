@@ -81,7 +81,7 @@ class _MenuState extends ConsumerState<Menu> {
           //   child: userEmail == null
           //       ? const Text('No user is logged in.')
           //       : Text(userEmail!),
-          // )
+          // )S
         ],
       ),
       body: _pages[_currentIndex], // Display the selected page

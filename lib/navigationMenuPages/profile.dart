@@ -10,11 +10,6 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
-
-
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
 
@@ -36,8 +31,8 @@ class _ProfileState extends ConsumerState<Profile> {
   final List<String> city = ["Gujarat", "Maharashtra", "Uttar Pradesh"];
   final PocketBaseAuthService authService =
       PocketBaseAuthService(PocketBase(getBaseUrl()));
-  String? currentUserId ;
-  final ImagePicker profilePic= ImagePicker();
+  String? currentUserId;
+  final ImagePicker profilePic = ImagePicker();
   XFile? _image;
 
   @override
@@ -70,7 +65,8 @@ class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     Future getImage() async {
-      final XFile? image = await profilePic.pickImage(source: ImageSource.gallery);
+      final XFile? image =
+          await profilePic.pickImage(source: ImageSource.gallery);
 
       setState(() {
         _image = image;
@@ -78,306 +74,271 @@ class _ProfileState extends ConsumerState<Profile> {
     }
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Profile"),
-      //   centerTitle: true,
-      //   leading: IconButton(
-      //       onPressed: () {
-      //
-      //       },
-      //       icon: Icon(Icons.arrow_back_ios)),
-      // ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                       getImage();
-                      },
-                      child: CircleAvatar(
-                        radius: 60,
-                        child:_image == null? Image.asset("assets/images/user_avatar.png"):
-                        Image.file(File(_image!.path)),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Picture Section
+                Center(
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: getImage,
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 70,
+                              backgroundColor: Colors.grey[200],
+                              backgroundImage: _image != null
+                                  ? FileImage(File(_image!.path))
+                                  : AssetImage("assets/images/user_avatar.png")
+                                      as ImageProvider,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    // FloatingActionButton(
-                    //
-                    //   tooltip: 'Pick Image',
-                    //   child: const Icon(Icons.add_a_photo),
-                    // ),
-                  ],
-                ),
-    ),
-
-
-              SizedBox(
-                height: 10,
-              ),
-              // Text(
-              //   "Personal Details",
-              //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              // ),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              //
-              // Text("Email Address: ",
-              //   style: TextStyle(
-              //   fontSize: 12,
-              //
-              // ),),
-              // SizedBox(height: 10,),
-              // TextField(
-              //   enabled: false,
-              //     controller: email,
-              //     decoration: InputDecoration(
-              //     hintText: "",
-              //     hintStyle: TextStyle(
-              //     fontSize: 13,
-              //     ),
-              //     isDense: true,
-              //     enabledBorder: OutlineInputBorder(
-              //     borderSide: BorderSide(color: Colors.grey,width: 1,),
-              //     borderRadius: BorderRadius.circular(10)
-              //     ),
-              //     focusedBorder: OutlineInputBorder(
-              //     borderSide: BorderSide(color: Colors.black,width: 1,),
-              //     borderRadius: BorderRadius.circular(10)
-              //     ),
-              //     ),
-              //     keyboardType: TextInputType.emailAddress,
-              //     ),
-              Text(
-                "Name",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: name,
-                decoration: InputDecoration(
-                  hintText: "Name",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
+                      SizedBox(height: 10),
+                      Text(
+                        "Tap to change profile picture",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      )
+                    ],
                   ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
                 ),
-                keyboardType: TextInputType.number,
-              ),
 
-              SizedBox(
-                height: 10,
-              ),
+                SizedBox(height: 20),
 
-              // Text("Password",
-              //   style: TextStyle(
-              //     fontSize: 12,
-              //
-              //   ),),
-              // SizedBox(height: 10,),
-              // TextField(
-              //   controller: email,
-              //   decoration: InputDecoration(
-              //     hintText: "Password",
-              //     hintStyle: TextStyle(
-              //       fontSize: 13,
-              //     ),
-              //     isDense: true,
-              //     enabledBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(color: Colors.grey,width: 1,),
-              //         borderRadius: BorderRadius.circular(10)
-              //     ),
-              //     focusedBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(color: Colors.black,width: 1,),
-              //         borderRadius: BorderRadius.circular(10)
-              //     ),
-              //   ),
-              //   keyboardType: TextInputType.visiblePassword,
-              //   obscureText: true,
-              //   obscuringCharacter: "*",
-              // ),
+                // Personal Details Section
+                _buildSectionTitle("Personal Details"),
+                _buildTextField(
+                  controller: name,
+                  label: "Name",
+                  hint: "Enter your name",
+                ),
 
-              Padding(
-                padding: const EdgeInsets.only(left: 260.0),
-                child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return Forgotpassword();
-                        },
-                      ));
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Forgotpassword(),
+                          ));
                     },
                     child: Text(
                       "Change Password",
                       style: TextStyle(
-                          color: Colors.red,
-                          decoration: TextDecoration.underline,
-                          fontSize: 10,
-                          decorationColor: Colors.red),
-                    )),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-
-              Divider(
-                color: Colors.grey,
-                height: 5,
-              ),
-
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Business Address Details",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-
-              Text(
-                "Pincode",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: pincode,
-                decoration: InputDecoration(
-                  hintText: "Pincode",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
+                        color: Colors.red,
+                        // decoration: TextDecoration.underline,
+                      ),
+                    ),
                   ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(
-                height: 10,
-              ),
 
-              Text(
-                "Address",
-                style: TextStyle(
-                  fontSize: 12,
+                // Business Address Section
+                _buildSectionTitle("Business Address Details"),
+                _buildTextField(
+                  controller: pincode,
+                  label: "Pincode",
+                  hint: "Enter pincode",
+                  keyboardType: TextInputType.number,
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: address,
-                decoration: InputDecoration(
-                  hintText: "Address",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
-                  ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
+                _buildTextField(
+                  controller: address,
+                  label: "Address",
+                  hint: "Enter full address",
                 ),
-                keyboardType: TextInputType.streetAddress,
-              ),
-              SizedBox(
-                height: 10,
-              ),
+                _buildTextField(
+                  controller: cityController,
+                  label: "City",
+                  hint: "Enter city name",
+                ),
+                _buildStateDrowdown(),
+                _buildTextField(
+                  controller: country,
+                  label: "Country",
+                  hint: "Enter country name",
+                ),
 
-              Text(
-                "City",
-                style: TextStyle(
-                  fontSize: 12,
+                // Bank Details Section
+                _buildSectionTitle("Bank Account Details"),
+                _buildTextField(
+                  controller: accountNo,
+                  label: "Bank Account Number",
+                  hint: "Enter account number",
+                  keyboardType: TextInputType.number,
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: cityController,
-                decoration: InputDecoration(
-                  hintText: "City",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
-                  ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
+                _buildTextField(
+                  controller: accountHolderName,
+                  label: "Account Holder's Name",
+                  hint: "Enter account holder name",
                 ),
-                keyboardType: TextInputType.text,
-              ),
-              SizedBox(
-                height: 10,
-              ),
+                _buildTextField(
+                  controller: ifsc,
+                  label: "IFSC Code",
+                  hint: "Enter IFSC code",
+                ),
 
-              Text(
-                "State",
-                style: TextStyle(
-                  fontSize: 12,
+                SizedBox(height: 20),
+
+                // Save Button
+                Custombutton(
+                  text: "Save Changes",
+                  onPressed: () async {
+                    print(currentUserId);
+                    if (currentUserId != null) {
+                      // Collect only the fields you want to update
+                      final data = {
+                        "name": "kdjd",
+                        "avatar": _image!.path,
+                        "pincode": pincode.text.isNotEmpty
+                            ? int.tryParse(pincode.text)
+                            : null,
+                        "address": address.text.trim(),
+                        "city": cityController.text.trim(),
+                        "state": dropdownValue.trim(),
+                        "country": country.text.trim(),
+                        "accountNo": accountNo.text.trim(),
+                        "accountHolderName": accountHolderName.text.trim(),
+                        "ifscCode": ifsc.text.trim(),
+                      };
+                      data.removeWhere(
+                          (key, value) => value == null); // Remove null fields
+
+                      try {
+                        await authService.updateRecord(currentUserId!, data);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("User information updated!")),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text("Error updating user: ${e.toString()}")),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("User not logged in.")),
+                      );
+                    }
+                  },
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey),
+              filled: true,
+              fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
-              SizedBox(
-                height: 10,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStateDrowdown() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "State",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
               ),
-              SizedBox(
-                width: double.infinity,
+            ),
+            SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: DropdownButton(
                   value: dropdownValue,
+                  isExpanded: true,
+                  underline: SizedBox(),
+                  dropdownColor: Colors.white,
                   items: city.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -391,299 +352,8 @@ class _ProfileState extends ConsumerState<Profile> {
                   },
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
-
-              Text(
-                "Country",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: country,
-                decoration: InputDecoration(
-                  hintText: "Country",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
-                  ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                keyboardType: TextInputType.text,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-
-              Divider(
-                color: Colors.grey,
-                height: 5,
-              ),
-
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Bank Account Details",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-
-              Text(
-                "Bank Account Number",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: accountNo,
-                decoration: InputDecoration(
-                  hintText: "Bank Account Number",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
-                  ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-
-              Text(
-                "Account Holder's Name",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: accountHolderName,
-                decoration: InputDecoration(
-                  hintText: "Account Holder's Name",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
-                  ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                keyboardType: TextInputType.streetAddress,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-
-              Text(
-                "IFSC Code",
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: ifsc,
-                decoration: InputDecoration(
-                  hintText: "IFSC Code",
-                  hintStyle: TextStyle(
-                    fontSize: 13,
-                  ),
-                  isDense: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                keyboardType: TextInputType.text,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-
-              // Custombutton(
-              //   text: "Save",
-              //   onPressed: () async {
-              //     if (currentUserId != null) {
-              //       try {
-              //         // Prepare data without the 'email' field
-              //         final data = {
-              //           "pincode": pincode.text,
-              //           "address": address.text,
-              //           "city": cityController.text,
-              //           "state":dropdownValue,
-              //           "country":country.text,
-              //           "accountNo":accountNo.text,
-              //           "accountHolderName": accountHolderName.text,
-              //           "ifscCode":ifsc.text
-              //         };
-              //         // Call the update function
-              //         await authService.updateUser(currentUserId, data);
-              //
-              //         // Show success message
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text("User information updated!")),
-              //         );
-              //       } catch (e) {
-              //         // Show error message
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text("Error updating user: $e")),
-              //         );
-              //       }
-              //     } else {
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //         SnackBar(content: Text("User not logged in.")),
-              //       );
-              //     }
-              //   },
-              // ),
-              Custombutton(
-                text: "Save",
-                onPressed: () async {
-                  print(currentUserId);
-                  if (currentUserId != null) {
-                    // Collect only the fields you want to update
-                    final data = {
-                      "name":"kdjd",
-                      "avatar":_image!.path,
-                      "pincode":pincode.text.isNotEmpty
-                          ? int.tryParse(pincode.text)
-                          : null,
-                      "address":address.text.trim(),
-                      "city":cityController.text.trim(),
-                      "state":dropdownValue.trim(),
-                      "country":country.text.trim(),
-                      "accountNo":accountNo.text.trim(),
-                      "accountHolderName":accountHolderName.text.trim(),
-                      "ifscCode":ifsc.text.trim(),
-                    };
-                    data.removeWhere(
-                        (key, value) => value == null); // Remove null fields
-
-                    try {
-                      await authService.updateRecord(currentUserId!, data);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("User information updated!")),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content:
-                                Text("Error updating user: ${e.toString()}")),
-                      );
-                    }
-                  }
-                  else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("User not logged in.")),
-                    );
-                  }
-                },
-              ),
-
-
-              // Custombutton(
-              //   text: "Save",
-              //   onPressed: () async {
-              //     print("Current User ID: $currentUserId");
-              //
-              //     if (currentUserId != null) {
-              //       // Collect and validate the fields to update
-              //       final data = {
-              //         "pincode": pincode.text.isNotEmpty ? int.tryParse(pincode.text) : null,
-              //         "address": address.text.trim(),
-              //         "city": cityController.text.trim(),
-              //         "state": dropdownValue.trim(),
-              //         "country": country.text.trim(),
-              //         "accountNo": accountNo.text.trim(),
-              //         "accountHolderName": accountHolderName.text.trim(),
-              //         "ifscCode": ifsc.text.trim(),
-              //       };
-              //
-              //       // Remove fields with null values
-              //       data.removeWhere((key, value) => value == null);
-              //
-              //       try {
-              //         await authService.updateUser1(currentUserId!, data);
-              //
-              //         // Show success message
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text("User information updated!")),
-              //         );
-              //       } catch (e) {
-              //         // Show error message
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text("Error updating user: ${e.toString()}")),
-              //         );
-              //       }
-              //     } else {
-              //       // User not logged in
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //         SnackBar(content: Text("User not logged in.")),
-              //       );
-              //     }
-              //   },
-              // ),
-
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          ],
+        ));
   }
-
 }
