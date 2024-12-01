@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class Forgotpassword extends StatelessWidget {
-  TextEditingController email=TextEditingController();
-  PocketBaseAuthService auth=PocketBaseAuthService(PocketBase(getBaseUrl()));
+  TextEditingController email = TextEditingController();
+  PocketBaseAuthService auth = PocketBaseAuthService(PocketBase(getBaseUrl()));
   final _formKey = GlobalKey<FormState>();
   Forgotpassword({super.key});
 
@@ -22,10 +22,8 @@ class Forgotpassword extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Pagetitle(
-                    text1: "Forgot ",
-                    text2: "password?"),
-                SizedBox(
+                const Pagetitle(text1: "Forgot ", text2: "password?"),
+                const SizedBox(
                   height: 30,
                 ),
                 Form(
@@ -36,8 +34,11 @@ class Forgotpassword extends StatelessWidget {
                         type: TextInputType.emailAddress,
                         controller: email,
                         hintText: "Enter your Email Address",
-                        prefixIcon: Icon(Icons.email_sharp,size: 20,),
-                        validator:(value) {
+                        prefixIcon: Icon(
+                          Icons.email_sharp,
+                          size: 20,
+                        ),
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Email cannot be empty';
                           }
@@ -49,28 +50,21 @@ class Forgotpassword extends StatelessWidget {
 
                           return null; // If the email is valid
                         },
-                                ),
-                      SizedBox(
+                      ),
+                      const SizedBox(
                         height: 30,
                       ),
                       RichText(
-                          text: TextSpan(
-                              children: [
-                                TextSpan(text: "* ",
-                                    style:TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.red
-                                    ) ),
-                                TextSpan(text: "We will send you a message to set or reset your new password ",
-                                    style:TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey
-                                    ) ),
-
-                              ]
-                          )
-                      ),
-                      SizedBox(
+                          text: const TextSpan(children: [
+                        TextSpan(
+                            text: "* ",
+                            style: TextStyle(fontSize: 12, color: Colors.red)),
+                        TextSpan(
+                            text:
+                                "We will send you a message to set or reset your new password ",
+                            style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      ])),
+                      const SizedBox(
                         height: 60,
                       ),
                       Custombutton(

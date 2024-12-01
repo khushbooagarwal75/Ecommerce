@@ -88,19 +88,17 @@ class _LoginState extends ConsumerState<Login> {
                         isPasswordVisible: isPasswordVisible,
                         prefixIcon: const Icon(Icons.lock),
                         validator: (value) {
-                          if( value!.isNotEmpty) {
-                            if( value!.length<=10 && value!.length>=16) {
+                          if (value!.isNotEmpty) {
+                            if (value!.length <= 10 && value!.length >= 16) {
                               return 'Password should be between 10 to 16 characters only';
                             }
-                          }
-                          else{
+                          } else {
                             return 'Please enter your password again';
                           }
                         },
                         onTogglePasswordVisibility: () {
-                          ref
-                              .read(passwordVisibilityProvider.notifier)
-                              .state = !isPasswordVisible;
+                          ref.read(passwordVisibilityProvider.notifier).state =
+                              !isPasswordVisible;
                         },
                       ),
                       const SizedBox(height: 5),
@@ -111,7 +109,7 @@ class _LoginState extends ConsumerState<Login> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>  Forgotpassword(),
+                                builder: (context) => Forgotpassword(),
                               ),
                             );
                           },
@@ -129,29 +127,33 @@ class _LoginState extends ConsumerState<Login> {
                         text: "Login",
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final authService = ref.read(pocketBaseAuthProvider);
+                            final authService =
+                                ref.read(pocketBaseAuthProvider);
                             try {
-                              //AB BTA KY KRNA MERA PHONE PR MSG KUCH MT KRN VO LEGYI
                               await authService.loginUser(
                                 emailController.text,
                                 passwordController.text,
                               );
 
-                              // Debugging to check if the login was successful
-                              final loggedInUserId = authService.getLoggedInUserId();
+                              final loggedInUserId =
+                                  authService.getLoggedInUserId();
                               // If no user ID, handle the error
                               if (loggedInUserId == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Login failed. No user ID found.")),
+                                  const SnackBar(
+                                      content: Text(
+                                          "Login failed. No user ID found.")),
                                 );
                                 return;
                               }
-
                               // Storing user data in SharedPreferences
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              await prefs.setString("userEmail", emailController.text);
-                              await prefs.setString("userId", loggedInUserId.toString());
-                              await prefs.setBool("isLoggedIn",true);
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  "userEmail", emailController.text);
+                              await prefs.setString(
+                                  "userId", loggedInUserId.toString());
+                              await prefs.setBool("isLoggedIn", true);
 
                               // Navigating to the next screen
                               Navigator.pushReplacement(
@@ -163,24 +165,24 @@ class _LoginState extends ConsumerState<Login> {
                             } catch (e) {
                               print('Login Error: $e');
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Login Failed! Email or password is incorrect")),
+                                const SnackBar(
+                                    content: Text(
+                                        "Login Failed! Email or password is incorrect")),
                               );
                             }
                           }
                         },
                       ),
-
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 100),
                 Socialnetworks(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  Signup(),
+                        builder: (context) => Signup(),
                       ),
                     );
                   },

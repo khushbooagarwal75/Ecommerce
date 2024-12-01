@@ -23,7 +23,10 @@ class _SplashscreenState extends State<Splashscreen> {
 
   void check_value_login() async {
     sp = await SharedPreferences.getInstance();
-    newuser = (sp.getBool('isLoggedIn') ?? false); // If not logged in, assume false
+    newuser = (sp.getBool('isLoggedIn') ?? false);
+
+    // Introduce a 2-second delay before navigating
+    await Future.delayed(Duration(seconds: 2));
 
     // Navigate based on login status
     if (newuser) {
@@ -45,8 +48,12 @@ class _SplashscreenState extends State<Splashscreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Image.asset("assets/images/cartify.png"), // Your splash screen image
+      body: Container(
+        color: const Color.fromARGB(255, 5, 12, 163),
+        child: Center(
+          child: Image.asset(
+              "assets/images/cartify-removebg-preview.png"), // Your splash screen image
+        ),
       ),
     );
   }
