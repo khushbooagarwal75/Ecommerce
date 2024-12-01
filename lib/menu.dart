@@ -5,6 +5,7 @@ import 'package:ecommerce_app/navigationMenuPages/wishlist.dart';
 import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/navigationMenuPages/profile.dart';
 import 'package:ecommerce_app/provider/provider.dart';
+import 'package:ecommerce_app/side_drawer.dart';
 import 'package:ecommerce_app/trendingProducts.dart'; // Import wishlist screen (replace Text widget)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,56 +19,69 @@ class Menu extends ConsumerStatefulWidget {
 }
 
 class _MenuState extends ConsumerState<Menu> {
-  int _currentIndex = 0;  // Tracks the selected index of the bottom navigation bar
-  String? userEmail;// Watch the user ID from Riverpod (using the userIdProvider)
+  int _currentIndex =
+      0; // Tracks the selected index of the bottom navigation bar
+  String?
+      userEmail; // Watch the user ID from Riverpod (using the userIdProvider)
   late SharedPreferences sp;
+  final List<Widget> _pages = [
+    Home(),
+    Wishlist(),
+    Text("Search"),
+    Profile(),
+  ];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     loadUserData();
   }
+
   Future<void> loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userEmail = prefs.getString('userEmail');
     });
   }
+
   @override
   Widget build(BuildContext context) {
-
-
     // Screens for each navigation item
     final List<Widget> _pages = [
       Home(),
-      Wishlist(),  // Replace the placeholder with the actual wishlist screen
-      Text("Search"),  // Placeholder, replace with search functionality
-      Profile(),  // Placeholder, replace with settings functionality
+      Wishlist(), // Replace the placeholder with the actual wishlist screen
+      Text("Search"), // Placeholder, replace with search functionality
+      Profile(), // Placeholder, replace with settings functionality
     ];
 
     return Scaffold(
+      drawer: AppSideDrawer(userEmail: userEmail), // Add this line
       appBar: AppBar(
         title: Text("Cartify"),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+        leading: Builder(
+          builder: (context) => IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: Icon(Icons.menu)),
+        ),
         actions: [
-          TextButton(onPressed: () async{
-            if(userEmail == null){
-              Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (context) {
-                    return Login();
-                  },));
-            }
-            else{
-              _showLogoutConfirmationDialog(context, _logout);
-            }
-          },
-              child: userEmail == null
-                  ? const Text('No user is logged in.')
-                  : Text(userEmail!),
-          )
-
+          // TextButton(
+          //   onPressed: () async {
+          //     if (userEmail == null) {
+          //       Navigator.pushReplacement(context, MaterialPageRoute(
+          //         builder: (context) {
+          //           return Login();
+          //         },
+          //       ));
+          //     } else {
+          //       _showLogoutConfirmationDialog(context, _logout);
+          //     }
+          //   },
+          //   child: userEmail == null
+          //       ? const Text('No user is logged in.')
+          //       : Text(userEmail!),
+          // )S
         ],
       ),
       body: _pages[_currentIndex], // Display the selected page
@@ -112,7 +126,8 @@ class _MenuState extends ConsumerState<Menu> {
     );
   }
 
-  void _showLogoutConfirmationDialog(BuildContext context, VoidCallback onConfirmLogout) {
+  void _showLogoutConfirmationDialog(
+      BuildContext context, VoidCallback onConfirmLogout) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -127,9 +142,9 @@ class _MenuState extends ConsumerState<Menu> {
               child: Text("Cancel"),
             ),
             TextButton(
-              onPressed: () async{
-                SharedPreferences prefs= await SharedPreferences.getInstance();
-                await prefs.setBool("isLoggedIn",false);
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool("isLoggedIn", false);
                 Navigator.of(context).pop(); // Close the dialog
                 onConfirmLogout(); // Call the logout function
               },
@@ -140,10 +155,12 @@ class _MenuState extends ConsumerState<Menu> {
       },
     );
   }
-  void _logout() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-      return Login();
-    },));
 
+  void _logout() {
+    Navigator.pushReplacement(context, MaterialPageRoute(
+      builder: (context) {
+        return Login();
+      },
+    ));
   }
 }

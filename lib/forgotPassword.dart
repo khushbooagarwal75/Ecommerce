@@ -16,6 +16,14 @@ class Forgotpassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context); // This will navigate back
+            },
+          ),
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(40.0),
@@ -42,28 +50,28 @@ class Forgotpassword extends StatelessWidget {
                           if (value == null || value.isEmpty) {
                             return 'Email cannot be empty';
                           }
-
-                          // Simple email format check
                           if (!value.contains('@') || !value.contains('.')) {
                             return 'Enter a valid email address';
                           }
-
-                          return null; // If the email is valid
+                          return null;
                         },
                       ),
                       const SizedBox(
                         height: 30,
                       ),
                       RichText(
-                          text: const TextSpan(children: [
-                        TextSpan(
+                        text: const TextSpan(children: [
+                          TextSpan(
                             text: "* ",
-                            style: TextStyle(fontSize: 12, color: Colors.red)),
-                        TextSpan(
+                            style: TextStyle(fontSize: 12, color: Colors.red),
+                          ),
+                          TextSpan(
                             text:
                                 "We will send you a message to set or reset your new password ",
-                            style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      ])),
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ]),
+                      ),
                       const SizedBox(
                         height: 60,
                       ),
@@ -74,7 +82,6 @@ class Forgotpassword extends StatelessWidget {
                             // final emailPass = email.text.trim();
                             // final success = await auth.requestPasswordReset(emailPass);
                             //
-                            // // Display success or error message
                             // ScaffoldMessenger.of(context).showSnackBar(
                             //   SnackBar(
                             //     content: Text(
