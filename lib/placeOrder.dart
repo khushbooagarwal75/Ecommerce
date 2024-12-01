@@ -400,7 +400,7 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
                               MaterialPageRoute(
                                 builder: (context) {
                                   return Payment(
-                                    id: product.id,
+                                    productId: product.id,
                                     productService: widget.productService,
                                   );
                                 },

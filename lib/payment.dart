@@ -1,20 +1,28 @@
+import 'package:ecommerce_app/Services/order_service.dart';
 import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/menu.dart';
 import 'package:ecommerce_app/model/product_model.dart';
+import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 class Payment extends ConsumerWidget {
-  final String id;
+  final String productId;
+  // final String userId;
   final ProductService productService;
-
-  const Payment({super.key, required this.id, required this.productService});
+  OrderService orderService=OrderService(PocketBase(getBaseUrl()));
+   Payment({super.key, required this.productId, required this.productService});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print("konsi=$productId");
+
     // Using ValueNotifier to track selected payment method
-    final ValueNotifier<String?> selectedPaymentMethod = ValueNotifier<String?>(null);
+    final ValueNotifier<String?> selectedPaymentMethod =
+        ValueNotifier<String?>(null);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +36,7 @@ class Payment extends ConsumerWidget {
         ),
       ),
       body: FutureBuilder<Product>(
-        future: productService.fetchProductById(id),
+        future: productService.fetchProductById(productId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -49,11 +57,27 @@ class Payment extends ConsumerWidget {
                 SizedBox(height: 20),
                 _buildSummaryRow("Shipping", "AMOUNT"),
                 SizedBox(height: 20),
-                _buildSummaryRow("Total", product.product_price.toString()),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Total",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      product.product_price.toString(),
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 20),
                 Divider(height: 2),
                 SizedBox(height: 20),
-                Text("Payment", style: TextStyle(fontSize: 16)),
+                Text("Payment",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold
+                    )),
                 SizedBox(height: 10),
 
                 // Payment methods
@@ -65,19 +89,19 @@ class Payment extends ConsumerWidget {
                         _buildPaymentMethodCard(
                           "Cash on delivery",
                           value,
-                              (method) => selectedPaymentMethod.value = method,
+                          (method) => selectedPaymentMethod.value = method,
                         ),
                         SizedBox(height: 10),
                         _buildPaymentMethodCard(
                           "Credit Card",
                           value,
-                              (method) => selectedPaymentMethod.value = method,
+                          (method) => selectedPaymentMethod.value = method,
                         ),
                         SizedBox(height: 10),
                         _buildPaymentMethodCard(
                           "Debit Card",
                           value,
-                              (method) => selectedPaymentMethod.value = method,
+                          (method) => selectedPaymentMethod.value = method,
                         ),
                       ],
                     );
@@ -96,10 +120,11 @@ class Payment extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(0),
                         ),
                       ),
-                      onPressed: value != null // Check if a payment method is selected
+                      onPressed: value !=
+                              null // Check if a payment method is selected
                           ? () async {
-                        _handlePayment(context);
-                      }
+                              _handlePayment(context);
+                            }
                           : null, // Disable the button if no method is selected
                       child: Center(
                         child: Padding(
@@ -113,7 +138,6 @@ class Payment extends ConsumerWidget {
                     );
                   },
                 ),
-
               ],
             ),
           );
@@ -124,6 +148,15 @@ class Payment extends ConsumerWidget {
 
   void _handlePayment(BuildContext context) async {
     // Show dialog
+    try{
+      // await orderService.createOrder(
+      //     productId,
+      //     paymentMode,
+      //     paymentStatus);
+    }
+    catch(e){
+      print(e.toString());
+    }
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -180,21 +213,25 @@ class Payment extends ConsumerWidget {
     );
   }
 
-
-
   // Helper method to build payment method card
   // Helper method to build payment method card
   Widget _buildPaymentMethodCard(
-      String methodName,
-      String? selectedMethod,
-      ValueChanged<String> onSelect,
-      ) {
+    String methodName,
+    String? selectedMethod,
+    ValueChanged<String> onSelect,
+  ) {
     final bool isSelected = selectedMethod == methodName;
 
     return GestureDetector(
       onTap: () => onSelect(methodName), // This updates the selected method
       child: Card(
-        color: isSelected ? Colors.blue.shade100 : Colors.grey.shade200,
+        shape: isSelected ? OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.black,
+            width: 2,
+          )
+        ):null,
+        color: Colors.grey.shade200,
         child: Row(
           children: [
             Padding(
