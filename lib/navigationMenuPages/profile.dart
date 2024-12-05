@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ecommerce_app/Services/auth_service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
+import 'package:ecommerce_app/navigationMenuPages/home.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,7 @@ class _ProfileState extends ConsumerState<Profile> {
   late String dropdownValue = city.first;
   final List<String> city = ["Gujarat", "Maharashtra", "Uttar Pradesh"];
   final PocketBaseAuthService authService =
-      PocketBaseAuthService(PocketBase(getBaseUrl()));
+  PocketBaseAuthService(PocketBase(getBaseUrl()));
   String? currentUserId;
   final ImagePicker profilePic = ImagePicker();
   XFile? _image;
@@ -66,7 +67,7 @@ class _ProfileState extends ConsumerState<Profile> {
   Widget build(BuildContext context) {
     Future getImage() async {
       final XFile? image =
-          await profilePic.pickImage(source: ImageSource.gallery);
+      await profilePic.pickImage(source: ImageSource.gallery);
 
       setState(() {
         _image = image;
@@ -79,7 +80,7 @@ class _ProfileState extends ConsumerState<Profile> {
         child: SingleChildScrollView(
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -97,7 +98,7 @@ class _ProfileState extends ConsumerState<Profile> {
                               backgroundImage: _image != null
                                   ? FileImage(File(_image!.path))
                                   : AssetImage("assets/images/user_avatar.png")
-                                      as ImageProvider,
+                              as ImageProvider,
                             ),
                             Positioned(
                               bottom: 0,
@@ -132,14 +133,6 @@ class _ProfileState extends ConsumerState<Profile> {
 
                 SizedBox(height: 20),
 
-                // Personal Details Section
-                _buildSectionTitle("Personal Details"),
-                _buildTextField(
-                  controller: name,
-                  label: "Name",
-                  hint: "Enter your name",
-                ),
-
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -154,7 +147,6 @@ class _ProfileState extends ConsumerState<Profile> {
                       "Change Password",
                       style: TextStyle(
                         color: Colors.red,
-                        // decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
@@ -178,7 +170,7 @@ class _ProfileState extends ConsumerState<Profile> {
                   label: "City",
                   hint: "Enter city name",
                 ),
-                _buildStateDrowdown(),
+                _buildStateDropdown(),
                 _buildTextField(
                   controller: country,
                   label: "Country",
@@ -210,12 +202,9 @@ class _ProfileState extends ConsumerState<Profile> {
                 Custombutton(
                   text: "Save Changes",
                   onPressed: () async {
-                    print(currentUserId);
                     if (currentUserId != null) {
-                      // Collect only the fields you want to update
                       final data = {
-                        "name": "kdjd",
-                        "avatar": _image!.path,
+                        "avatar": _image != null ? _image!.path : null,
                         "pincode": pincode.text.isNotEmpty
                             ? int.tryParse(pincode.text)
                             : null,
@@ -227,19 +216,23 @@ class _ProfileState extends ConsumerState<Profile> {
                         "accountHolderName": accountHolderName.text.trim(),
                         "ifscCode": ifsc.text.trim(),
                       };
-                      data.removeWhere(
-                          (key, value) => value == null); // Remove null fields
+
+                      // Remove null fields
+                      data.removeWhere((key, value) => value == null);
+
+                      print("Data to update: $data"); // Log the data being passed
 
                       try {
                         await authService.updateRecord(currentUserId!, data);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("User information updated!")),
                         );
+                       Navigator.pop(context);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              content:
-                                  Text("Error updating user: ${e.toString()}")),
+                            content: Text("Error updating user: ${e.toString()}"),
+                          ),
                         );
                       }
                     } else {
@@ -304,7 +297,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 borderSide: BorderSide.none,
               ),
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),
           ),
         ],
@@ -312,7 +305,7 @@ class _ProfileState extends ConsumerState<Profile> {
     );
   }
 
-  Widget _buildStateDrowdown() {
+  Widget _buildStateDropdown() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(

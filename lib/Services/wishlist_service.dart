@@ -24,7 +24,6 @@ class WishlistService {
       final records = await client.collection('wishlist_Products').getFullList(
         filter: 'userId = "$userId"',
       );
-      print('Fetched wishlist items: ${records.map((record) => record.data)}');
       return records.map((record) => WishlistItem.fromMap(record.data)).toList();
     } catch (e) {
       print('Error fetching wishlist: $e');

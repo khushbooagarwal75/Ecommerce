@@ -28,19 +28,21 @@ class _CheckoutState extends ConsumerState<Checkout> {
   late TextEditingController addressController;
   late PocketBaseAuthService authService;
   String? userId;
+  String? currentAddress;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Use ref.read() to get the userId once
     loadUserData();
   }
+
   Future<void> loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userId = prefs.getString('userId');
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -56,7 +58,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
 
   @override
   Widget build(BuildContext context) {
-    void _showAddAddressDialog(BuildContext context) {
+    void _showAddAddressDialog(BuildContext context, {String? userAddress}) {
+      addressController.text = userAddress ?? '';
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -76,13 +79,12 @@ class _CheckoutState extends ConsumerState<Checkout> {
               ),
               TextButton(
                 onPressed: () {
-
                   String newAddress = addressController.text.trim();
                   if (newAddress.isNotEmpty) {
-                    authService.updateRecord(userId!, {"address":addressController.text}).then((_) {
+                    authService.updateRecord(userId!, {"address": newAddress}).then((_) {
                       Navigator.pop(context);
                       setState(() {
-
+                        currentAddress = newAddress;  // Update the address in the UI
                       });
                     });
                   }
@@ -136,6 +138,7 @@ class _CheckoutState extends ConsumerState<Checkout> {
               }
 
               final address = addressSnapshot.data?['address'] ?? 'No address found';
+              currentAddress = address; // Store the initial address
 
               return SingleChildScrollView(
                 child: Padding(
@@ -170,14 +173,14 @@ class _CheckoutState extends ConsumerState<Checkout> {
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: Text("Address: $address"),
+                                          child: Text("Address: $currentAddress"),
                                         ),
                                         IconButton(
                                           onPressed: () {
-                                            if (address == null || address.isEmpty) {
+                                            if (currentAddress == null || currentAddress!.isEmpty) {
                                               _showAddAddressDialog(context);  // Show add address dialog
                                             } else {
-                                              _showAddAddressDialog(context);  // Edit existing address
+                                              _showAddAddressDialog(context, userAddress: currentAddress);  // Edit existing address
                                             }
                                           },
                                           icon: const Icon(Icons.edit, size: 20),
@@ -189,7 +192,6 @@ class _CheckoutState extends ConsumerState<Checkout> {
                               ),
                             ),
                           ),
-
                         ],
                       ),
                       const SizedBox(height: 10),

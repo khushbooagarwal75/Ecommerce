@@ -10,6 +10,7 @@ class Forgotpassword extends StatelessWidget {
   TextEditingController email = TextEditingController();
   PocketBaseAuthService auth = PocketBaseAuthService(PocketBase(getBaseUrl()));
   final _formKey = GlobalKey<FormState>();
+
   Forgotpassword({super.key});
 
   @override
@@ -79,19 +80,28 @@ class Forgotpassword extends StatelessWidget {
                         text: "Submit",
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            // final emailPass = email.text.trim();
-                            // final success = await auth.requestPasswordReset(emailPass);
-                            //
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   SnackBar(
-                            //     content: Text(
-                            //       success
-                            //           ? 'Password reset email sent! Please check your inbox.'
-                            //           : 'Failed to send reset email. Please try again.',
-                            //     ),
-                            //     backgroundColor: success ? Colors.green : Colors.red,
-                            //   ),
-                            // );
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return Center(child: CircularProgressIndicator());
+                              },
+                            );
+
+                            final emailPass = email.text.trim();
+                            final success = await auth.requestPasswordReset(emailPass);
+
+                            Navigator.pop(context); // Close the loading dialog
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  success
+                                      ? 'Password reset email sent! Please check your inbox.'
+                                      : 'Failed to send reset email. Please try again.',
+                                 ),
+                                backgroundColor: success ? Colors.green : Colors.red,
+                              ),
+                            );
                           }
                         },
                       )

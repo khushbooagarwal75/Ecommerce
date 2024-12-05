@@ -62,54 +62,53 @@ class Home extends ConsumerWidget {
                     ),
                     categoryValue.when(
                       data: (categories) {
-                        return Row(
-                          children: categories.map((category) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return Category(
-                                        categoryId: category.id,
-                                        categoryName: category.category_name);
-                                  },
-                                ));
-                              },
-                              child: Row(
-                                children: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                              color: Colors.red.shade300),
-                                          color: Colors.transparent,
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: 25,
-                                          backgroundColor:
-                                              Colors.red.withOpacity(0.1),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Image.network(
-                                              category.getImageUrl(getBaseUrl()
-                                                  as String), // Assuming Category has an `imageUrl` field
-                                              fit: BoxFit.cover,
+                        return IntrinsicWidth(
+                          child: Row(
+                            children: categories.map((category) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return Category(
+                                          categoryId: category.id,
+                                          categoryName: category.category_name);
+                                    },
+                                  ));
+                                },
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.red.shade300,width: 2),
+                                            color: Colors.transparent,
+                                          ),
+                                          child:  ClipOval(  // Ensures that the image stays within the circle
+                                            child: SizedBox(
+                                              width: 50,  // You can adjust this width and height as per your requirements
+                                              height: 50,
+                                              child: Image.network(
+                                                category.getImageUrl(getBaseUrl() as String),
+                                                fit: BoxFit.cover,  // Ensures the image covers the circle area without overflow
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Text(category
-                                          .category_name), // Assuming Category has a `name` field
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
+                                        Text(category
+                                            .category_name), // Assuming Category has a `name` field
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         );
                       },
                       loading: () => Center(child: CircularProgressIndicator()),
@@ -518,7 +517,7 @@ class Home extends ConsumerWidget {
                                     Navigator.push(context, MaterialPageRoute(
                                       builder: (context) {
                                         return Category(
-                                            categoryId: '5z4vt61rmnp5eeq',
+                                            categoryId: 'x3smn37op5muuf5',
                                             categoryName: 'Footwear');
                                       },
                                     ));
@@ -880,7 +879,7 @@ class Home extends ConsumerWidget {
                                     Navigator.push(context, MaterialPageRoute(
                                       builder: (context) {
                                         return Category(
-                                            categoryId: '5z4vt61rmnp5eeq',
+                                            categoryId: 'x3smn37op5muuf5',
                                             categoryName: 'Footwear');
                                       },
                                     ));

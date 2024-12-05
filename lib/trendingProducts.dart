@@ -16,16 +16,14 @@ class Trendingproducts extends ConsumerWidget {
           appBar: AppBar(
             title: Text("Cartify"),
             centerTitle: true,
-            automaticallyImplyLeading: false,
-            leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
-            actions: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: Image.asset("assets/images/cartify.png"),
-              )
-            ],
+            // actions: [
+            //   Container(
+            //     decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //     ),
+            //     child: Image.asset("assets/images/cartify.png"),
+            //   )
+            // ],
           ),
             body: Padding(
               padding: const EdgeInsets.all(16.0),

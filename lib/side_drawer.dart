@@ -1,3 +1,6 @@
+import 'package:ecommerce_app/navigationMenuPages/home.dart';
+import 'package:ecommerce_app/navigationMenuPages/myOrders.dart';
+import 'package:ecommerce_app/navigationMenuPages/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ecommerce_app/login.dart';
@@ -80,7 +83,7 @@ class AppSideDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context); // Close the drawer
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Profile()));
+                  context, MaterialPageRoute(builder: (context) => Myorders()));
             },
           ),
           ListTile(
@@ -89,26 +92,26 @@ class AppSideDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context); // Close the drawer
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Profile()));
+                  context, MaterialPageRoute(builder: (context) => Wishlist()));
             },
           ),
           ListTile(
             leading: Icon(Icons.star),
             title: Text('Rate Cartify'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Profile()));
+            //   Navigator.pop(context); // Close the drawer
+            //   Navigator.push(
+            //       context, MaterialPageRoute(builder: (context) => Home()));
             },
           ),
           ListTile(
             leading: Icon(Icons.policy),
             title: Text('Legal and policies'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Profile()));
-            },
+            // onTap: () {
+            //   Navigator.pop(context); // Close the drawer
+            //   Navigator.push(
+            //       context, MaterialPageRoute(builder: (context) => Home()));
+            // },
           ),
           ListTile(
             leading: Icon(Icons.question_answer),
@@ -144,7 +147,7 @@ class AppSideDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Logout'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pop(context);
               _showLogoutConfirmationDialog(context);
             },
           ),

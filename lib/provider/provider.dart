@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:ecommerce_app/Services/order_service.dart';
 import 'package:ecommerce_app/Services/wishlist_service.dart';
+import 'package:ecommerce_app/model/order_model.dart';
 import 'package:ecommerce_app/model/wishlist_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -11,7 +13,7 @@ import 'package:ecommerce_app/model/product_model.dart';
 
 // Determine the appropriate base URL
 String getBaseUrl() {
-  return 'http://192.168.27.32:8090';
+  return 'https://cartify-ecommerce.pockethost.io/';
 }
 
 // Initialize PocketBase client
@@ -73,5 +75,16 @@ final userIdProvider = StateProvider<String?>((ref) {
 final productProviderByCategory = FutureProvider.family<List<Product>, String>((ref, categoryId) async {
   final productService = ref.read(productServiceProvider); // Fetch the ProductService
   return await productService.fetchProductsByCategory(categoryId); // Fetch products for the given category ID
+});
+
+final orderServiceProvider = Provider<OrderService>((ref) {
+  final client = ref.read(pocketBaseClientProvider);
+  return OrderService(client); // Corrected to return WishlistService
+});
+
+final orderProvider = FutureProvider.family<List<Order>, String>((ref, userEmail) async {
+  final service = ref.read(orderServiceProvider);
+  final orders = await service.fetchOrders(userEmail);
+  return orders;
 });
 

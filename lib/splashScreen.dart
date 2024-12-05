@@ -52,7 +52,7 @@ class _SplashscreenState extends State<Splashscreen> {
         // color: const Color.fromARGB(255, 224, 24, 24),
         child: Center(
           child: Image.asset(
-            "assets/images/cartify-removebg-preview.png",
+            "assets/images/logo.png",
             color: Colors.red,
           ), // Your splash screen image
         ),

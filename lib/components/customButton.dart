@@ -9,7 +9,6 @@ class Custombutton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           shape: RoundedRectangleBorder(

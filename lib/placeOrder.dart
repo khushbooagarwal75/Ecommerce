@@ -119,303 +119,308 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
           }
 
           final product = snapshot.data!;
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Product details UI
-              Card(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
+          return SingleChildScrollView(
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Product details UI
+                  Card(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
                         children: [
-                          Image.network(
-                            product.getImageUrl(getBaseUrl()),
-                            width: 100,
-                          ),
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    product.product_name,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    product.product_desc,
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  RichText(
-                                    text: TextSpan(children: [
-                                      TextSpan(
-                                        text: "Delivery by  ",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "Delivery by",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.black,
+                          Row(
+                            children: [
+                              Image.network(
+                                product.getImageUrl(getBaseUrl()),
+                                width: 100,
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        product.product_name,
+                                        style: const TextStyle(
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ]),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        product.product_desc,
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      RichText(
+                                        text: TextSpan(children: [
+                                          TextSpan(
+                                            text: "Delivery by  ",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: "Delivery by",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ]),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              // Other details
-              // Payment and buttons
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.discount),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "Apply Coupons",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Select",
-                            style: TextStyle(
-                              color: Colors.red,
-                              decorationColor: Colors.red,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Order Payment Details",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Order Amounts",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            "amount",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Convienence",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "Know more",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                              decorationColor: Colors.red,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Apply Coupon",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                              decorationColor: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Delivery Fee",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Free",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                              decorationColor: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Order Total",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Spacer(),
-                          Text(
-                            product.product_price.toString(),
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "EMI Available",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            "Details",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                              decorationColor: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-
-
-                  ],
-                ),
-              ),
-              BottomSheet(
-                onClosing: () {},
-                builder: (context) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
+                  // Other details
+                  // Payment and buttons
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Card(
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          children: [
-                            Text(product.product_price.toString()),
-                            const SizedBox(height: 2),
-                            const Text(
-                              "View Details",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                                decorationColor: Colors.red,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.discount),
+                              SizedBox(
+                                width: 10,
                               ),
+                              Text(
+                                "Apply Coupons",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Spacer(),
+                              Text(
+                                "Select",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  decorationColor: Colors.red,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Divider(
+                          height: 1,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Order Payment Details",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Order Amounts",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              Text(
+                                "amount",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Convienence",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Know more",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  decorationColor: Colors.red,
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                "Apply Coupon",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  decorationColor: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Delivery Fee",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                "Free",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  decorationColor: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Divider(
+                          height: 1,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Order Total",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              Spacer(),
+                              Text(
+                                product.product_price.toString(),
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "EMI Available",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                "Details",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  decorationColor: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+
+
+                      ],
+                    ),
+                  ),
+                  BottomSheet(
+                    onClosing: () {},
+                    builder: (context) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Column(
+                              children: [
+                                Text(product.product_price.toString()),
+                                const SizedBox(height: 2),
+                                const Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                    decorationColor: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Custombutton(
+                              text: "Proceed to Payment",
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return Payment(
+                                        productId: product.id,
+                                        productService: widget.productService,
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
-                        const Spacer(),
-                        Custombutton(
-                          text: "Proceed to Payment",
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return Payment(
-                                    productId: product.id,
-                                    productService: widget.productService,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
 
-            ],
+                ],
+              ),
+            ),
           );
+
         },
       ),
     );

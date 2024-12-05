@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/navigationMenuPages/home.dart';
 import 'package:ecommerce_app/login.dart';
+import 'package:ecommerce_app/navigationMenuPages/myOrders.dart';
 import 'package:ecommerce_app/navigationMenuPages/wishlist.dart';
 import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/navigationMenuPages/profile.dart';
@@ -27,7 +28,7 @@ class _MenuState extends ConsumerState<Menu> {
   final List<Widget> _pages = [
     Home(),
     Wishlist(),
-    Text("Search"),
+    Myorders(),
     Profile(),
   ];
   @override
@@ -50,7 +51,7 @@ class _MenuState extends ConsumerState<Menu> {
     final List<Widget> _pages = [
       Home(),
       Wishlist(), // Replace the placeholder with the actual wishlist screen
-      Text("Search"), // Placeholder, replace with search functionality
+      Myorders(), // Placeholder, replace with search functionality
       Profile(), // Placeholder, replace with settings functionality
     ];
 

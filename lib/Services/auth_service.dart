@@ -81,23 +81,29 @@ class PocketBaseAuthService {
     }
   }
 
-  // Future<bool> requestPasswordReset(String email) async {
-  //   try {
-  //     await client.collection('users').requestPasswordReset(email.trim());
-  //     return true;
-  //   } catch (error) {
-  //     print("Error sending reset email: $error");
-  //     return false;
-  //   }
-  // }
-  //
-  // Future<void> resetPasswordWithToken(String resetToken, String newPassword) async {
-  //   try {
-  //     final result = await client.collection('users').resetPassword(resetToken, newPassword);
-  //     print('Password reset result: $result');
-  //   } catch (error) {
-  //     print("Error resetting password: $error");
-  //     throw Exception('Failed to reset password');
-  //   }
-  // }
+  Future<bool> requestPasswordReset(String email) async {
+    try {
+      await client.collection('users').requestPasswordReset(email.trim());
+      return true;
+    } catch (error) {
+      print("Error sending reset email: $error");
+      return false;
+    }
+  }
+
+  // Confirm password reset using token
+  Future<void> confirmPasswordReset(String resetToken, String newPassword) async {
+    try {
+      await client.collection('users').confirmPasswordReset(
+        resetToken,
+        newPassword,
+        newPassword,
+      );
+      print("Password reset successfully.");
+    } catch (error) {
+      print("Error resetting password: $error");
+      rethrow;
+    }
+  }
+
 }
