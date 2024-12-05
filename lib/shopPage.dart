@@ -61,7 +61,12 @@ class _ShoppageState extends State<Shoppage> {
           final product = snapshot.data!;
 
           return SingleChildScrollView(
+<<<<<<< HEAD
             child: IntrinsicHeight(
+=======
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -74,6 +79,7 @@ class _ShoppageState extends State<Shoppage> {
                       fit: BoxFit.cover,
                     ),
                   ),
+<<<<<<< HEAD
                   const SizedBox(height: 30),
                   // Size Section
 
@@ -108,10 +114,48 @@ class _ShoppageState extends State<Shoppage> {
                         Text(
                           product.product_price.toString(),
                           style: TextStyle(fontSize: 16, height: 1.5),
+=======
+                  const SizedBox(height: 10),
+
+                  // Dots Indicator
+                  Center(
+                    child: DotsIndicator(
+                      dotsCount: 4,
+                      decorator: DotsDecorator(
+                        activeColor: Colors.red,
+                        size: Size(10, 10),
+                        activeSize: Size(12, 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Size Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Size: ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Card(
+                          shape: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.red)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              product.id,
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ),
+                          ),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                         ),
                       ],
                     ),
                   ),
+<<<<<<< HEAD
                   const SizedBox(height: 20),
                   // Spacer to push the buttons to the bottom
                   Spacer(),
@@ -119,6 +163,23 @@ class _ShoppageState extends State<Shoppage> {
                   // Action Buttons at the Bottom
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 0.0),
+=======
+                  const SizedBox(height: 10),
+
+                  // Product Description
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      product.product_desc,
+                      style: TextStyle(fontSize: 16, height: 1.5),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Action Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                     child: Row(
                       children: [
                         // Go to Cart Button
@@ -127,6 +188,7 @@ class _ShoppageState extends State<Shoppage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blueAccent,
                               shape: RoundedRectangleBorder(
+<<<<<<< HEAD
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               padding: EdgeInsets.symmetric(vertical: 14),
@@ -135,16 +197,30 @@ class _ShoppageState extends State<Shoppage> {
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
                                 return Myorders();
                               },));
+=======
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircleAvatar(
+<<<<<<< HEAD
                                   backgroundColor: Colors.white,
                                   child: Icon(Icons.shopping_cart,
                                       color: Colors.blueAccent),
                                 ),
                                 const SizedBox(width: 10),
+=======
+                                    backgroundColor: Colors.white,
+                                    child: Icon(Icons.shopping_cart,
+                                        color: Colors.blueAccent)),
+                                const SizedBox(width: 8),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                                 Text(
                                   "Go to cart",
                                   style: TextStyle(
@@ -154,16 +230,25 @@ class _ShoppageState extends State<Shoppage> {
                             ),
                           ),
                         ),
+<<<<<<< HEAD
                         const SizedBox(width: 16),
+=======
+                        const SizedBox(width: 10),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                         // Buy Now Button
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               shape: RoundedRectangleBorder(
+<<<<<<< HEAD
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               padding: EdgeInsets.symmetric(vertical: 14),
+=======
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                             ),
                             onPressed: () {
                               if (currentUserId != null) {
@@ -184,10 +269,17 @@ class _ShoppageState extends State<Shoppage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircleAvatar(
+<<<<<<< HEAD
                                   backgroundColor: Colors.white,
                                   child: Icon(Icons.money, color: Colors.green),
                                 ),
                                 const SizedBox(width: 10),
+=======
+                                    backgroundColor: Colors.white,
+                                    child:
+                                        Icon(Icons.money, color: Colors.green)),
+                                const SizedBox(width: 8),
+>>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
                                 Text(
                                   "Buy Now",
                                   style: TextStyle(
@@ -209,4 +301,3 @@ class _ShoppageState extends State<Shoppage> {
     );
   }
 }
-
