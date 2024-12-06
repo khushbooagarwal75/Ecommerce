@@ -1,7 +1,6 @@
 import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
 import 'package:ecommerce_app/login.dart';
-import 'package:ecommerce_app/navigation/navigation_provider.dart';
 import 'package:ecommerce_app/onBoard.dart';
 import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/signUp.dart';
@@ -16,11 +15,8 @@ void main() {
 class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final showHomeScreen = ref.watch(navigationProvider);
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: showHomeScreen ?  Placeorder() : Splashscreen(),
       home: Splashscreen(),
     );
   }

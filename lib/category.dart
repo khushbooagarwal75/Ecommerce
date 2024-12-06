@@ -6,9 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class Category extends ConsumerWidget {
   final String categoryId;
   final String categoryName;
-
-
-
   Category({Key? key, required this.categoryId, required this.categoryName}) : super(key: key);
 
   @override
