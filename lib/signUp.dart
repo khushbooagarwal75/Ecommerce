@@ -33,7 +33,6 @@ class _SignupState extends ConsumerState<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    // Watching password visibility state for both fields
     final isPasswordVisible = ref.watch(passwordVisibilityProvider);
     final isConfirmPasswordVisible =
         ref.watch(confirmPasswordVisibilityProvider);
@@ -44,7 +43,7 @@ class _SignupState extends ConsumerState<Signup> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
-              Navigator.pop(context); // Go back to the previous screen
+              Navigator.pop(context);
             },
           ),
           backgroundColor: Colors.transparent,

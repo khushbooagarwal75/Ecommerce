@@ -25,18 +25,14 @@ class _SplashscreenState extends State<Splashscreen> {
     sp = await SharedPreferences.getInstance();
     newuser = (sp.getBool('isLoggedIn') ?? false);
 
-    // Introduce a 2-second delay before navigating
     await Future.delayed(Duration(seconds: 2));
 
-    // Navigate based on login status
     if (newuser) {
-      // If user is logged in, go to the Home page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Menu()),
       );
     } else {
-      // If user is not logged in, show the onboarding page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Onboard()),
@@ -49,12 +45,11 @@ class _SplashscreenState extends State<Splashscreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        // color: const Color.fromARGB(255, 224, 24, 24),
         child: Center(
           child: Image.asset(
             "assets/images/logo.png",
             color: Colors.red,
-          ), // Your splash screen image
+          ),
         ),
       ),
     );

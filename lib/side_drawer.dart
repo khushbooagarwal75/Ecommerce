@@ -1,11 +1,9 @@
-import 'package:ecommerce_app/navigationMenuPages/home.dart';
 import 'package:ecommerce_app/navigationMenuPages/myOrders.dart';
 import 'package:ecommerce_app/navigationMenuPages/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ecommerce_app/login.dart';
 import 'package:ecommerce_app/navigationMenuPages/profile.dart';
-import 'package:ecommerce_app/placeOrder.dart';
 
 class AppSideDrawer extends StatelessWidget {
   final String? userEmail;
@@ -190,51 +188,23 @@ class AppSideDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.star),
             title: Text('Rate Cartify'),
-            onTap: () {
-            //   Navigator.pop(context); // Close the drawer
-            //   Navigator.push(
-            //       context, MaterialPageRoute(builder: (context) => Home()));
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: Icon(Icons.policy),
             title: Text('Legal and policies'),
-            // onTap: () {
-            //   Navigator.pop(context); // Close the drawer
-            //   Navigator.push(
-            //       context, MaterialPageRoute(builder: (context) => Home()));
-            // },
+            onTap: () {},
           ),
           ListTile(
             leading: Icon(Icons.question_answer),
             title: Text('FAQS'),
-            onTap: () {
-              // Navigator.pop(context); // Close the drawer
-              // Navigator.push(
-              //     context, MaterialPageRoute(builder: (context) => Profile()));
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: Icon(Icons.call),
             title: Text('Help Center'),
-            onTap: () {
-              //   Navigator.pop(context); // Close the drawer
-              //   Navigator.push(
-              //       context, MaterialPageRoute(builder: (context) => Profile()));
-            },
+            onTap: () {},
           ),
-
-          // ListTile(
-          //   leading: Icon(Icons.shopping_cart),
-          //   title: Text('Orders'),
-          //   onTap: () {
-          //     Navigator.pop(context); // Close the drawer
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => )
-          //     );
-          //   },
-          // ),
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Logout'),

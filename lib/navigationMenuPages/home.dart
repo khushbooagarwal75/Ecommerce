@@ -1,5 +1,4 @@
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/category.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:ecommerce_app/shopPage.dart';

@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class Category extends ConsumerWidget {
   final String categoryId;
   final String categoryName;
-  Category({Key? key, required this.categoryId, required this.categoryName}) : super(key: key);
+  Category({Key? key, required this.categoryId, required this.categoryName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the product provider to fetch products of the selected category
     final productAsyncValue = ref.watch(productProviderByCategory(categoryId));
     final productService = ref.read(productServiceProvider);
 
@@ -21,7 +21,8 @@ class Category extends ConsumerWidget {
       body: productAsyncValue.when(
         data: (products) {
           if (products.isEmpty) {
-            return const Center(child: Text('No products found in this category.'));
+            return const Center(
+                child: Text('No products found in this category.'));
           }
           return ListView.builder(
             itemCount: products.length,
@@ -29,12 +30,14 @@ class Category extends ConsumerWidget {
               final product = products[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Shoppage(
-                          id: product.id,
-                          productService: productService,
-                        );
-                  },));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return Shoppage(
+                        id: product.id,
+                        productService: productService,
+                      );
+                    },
+                  ));
                 },
                 child: Card(
                   elevation: 4,
@@ -42,7 +45,7 @@ class Category extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: SizedBox(
-                    height: 250, // Adjust width of each product card
+                    height: 250,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -56,8 +59,10 @@ class Category extends ConsumerWidget {
                               width: double.infinity,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                                  Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                              loadingBuilder: (context, child, loadingProgress) {
+                                  Icon(Icons.broken_image,
+                                      size: 50, color: Colors.grey),
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
                                 return Center(
                                   child: CircularProgressIndicator(),

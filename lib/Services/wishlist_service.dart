@@ -5,10 +5,8 @@ import 'package:pocketbase/pocketbase.dart';
 class WishlistService {
   final PocketBase client;
 
-  // Constructor accepting the PocketBase client
   WishlistService(this.client);
 
-  // Add an item to the wishlist
   Future<void> addToWishlist(WishlistItem item) async {
     try {
       final record = await client.collection('wishlist_Products').create(body: item.toMap());
@@ -18,7 +16,6 @@ class WishlistService {
     }
   }
 
-  // Fetch wishlist items for a specific user
   Future<List<WishlistItem>> getWishlist(String userId) async {
     try {
       final records = await client.collection('wishlist_Products').getFullList(

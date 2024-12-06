@@ -32,12 +32,14 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
     // Use ref.read() to get the userId once
     loadUserData();
   }
+
   Future<void> loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userId = prefs.getString('userId');
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final wishlistService = ref.read(wishlistServiceProvider);
@@ -63,7 +65,8 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
         actions: [
           wishlistFuture.when(
             data: (wishlistItems) {
-              isWishlisted = wishlistItems.any((item) => item.productId == widget.id);
+              isWishlisted =
+                  wishlistItems.any((item) => item.productId == widget.id);
 
               return IconButton(
                 onPressed: () async {
@@ -76,7 +79,8 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
                     return;
                   }
 
-                  final wishlistItem = WishlistItem(userId: userId!, productId: widget.id);
+                  final wishlistItem =
+                      WishlistItem(userId: userId!, productId: widget.id);
 
                   try {
                     await wishlistService.addToWishlist(wishlistItem);
@@ -231,7 +235,8 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
                         ),
                         Text(
                           "Order Payment Details",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                         SizedBox(
                           height: 15,
@@ -366,8 +371,6 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
                         SizedBox(
                           height: 30,
                         ),
-
-
                       ],
                     ),
                   ),
@@ -415,12 +418,10 @@ class _PlaceorderState extends ConsumerState<Placeorder> {
                       );
                     },
                   ),
-
                 ],
               ),
             ),
           );
-
         },
       ),
     );

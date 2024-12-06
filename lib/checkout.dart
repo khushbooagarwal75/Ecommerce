@@ -76,7 +76,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
               onPressed: () {
                 String newAddress = addressController.text.trim();
                 if (newAddress.isNotEmpty) {
-                  authService.updateRecord(userId!, {"address": newAddress}).then((_) {
+                  authService
+                      .updateRecord(userId!, {"address": newAddress}).then((_) {
                     Navigator.pop(context);
                     setState(() {
                       currentAddress = newAddress;
@@ -128,7 +129,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
                 return const Center(child: CircularProgressIndicator());
               } else if (addressSnapshot.hasError) {
                 return Center(
-                  child: Text('Error Fetching Address: ${addressSnapshot.error}'),
+                  child:
+                      Text('Error Fetching Address: ${addressSnapshot.error}'),
                 );
               }
 
@@ -148,7 +150,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
                           SizedBox(width: 5),
                           Text(
                             "Delivery Address",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
                       ),
@@ -164,7 +167,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        currentAddress == null || currentAddress!.isEmpty
+                                        currentAddress == null ||
+                                                currentAddress!.isEmpty
                                             ? "No address found"
                                             : "Address: $currentAddress",
                                       ),
@@ -188,7 +192,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
                       const SizedBox(height: 10),
                       const Text(
                         "Shopping List",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 5),
                       Card(
@@ -206,7 +211,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
                                   const SizedBox(width: 10),
                                   Flexible(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           product.product_name,
@@ -225,7 +231,8 @@ class _CheckoutState extends ConsumerState<Checkout> {
                               const Divider(height: 1),
                               const SizedBox(height: 10),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text("Total Order (1):"),
                                   Text(product.product_price.toString()),
@@ -237,19 +244,20 @@ class _CheckoutState extends ConsumerState<Checkout> {
                       ),
                       Custombutton(
                         text: "Continue",
-                        onPressed: currentAddress == null || currentAddress!.isEmpty
-                            ? () => _showAddAddressDialog(context)
-                            : () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Placeorder(
-                                id: product.id,
-                                productService: widget.productService,
-                              ),
-                            ),
-                          );
-                        },
+                        onPressed:
+                            currentAddress == null || currentAddress!.isEmpty
+                                ? () => _showAddAddressDialog(context)
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Placeorder(
+                                          id: product.id,
+                                          productService: widget.productService,
+                                        ),
+                                      ),
+                                    );
+                                  },
                       ),
                     ],
                   ),

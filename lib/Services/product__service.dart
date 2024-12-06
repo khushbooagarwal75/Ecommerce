@@ -4,16 +4,12 @@ import 'package:pocketbase/pocketbase.dart';
 class ProductService {
   final PocketBase client;
 
-  // Constructor accepting the PocketBase client
   ProductService(this.client);
 
-  // Fetch products using the PocketBase API
   Future<List<Product>> fetchProducts() async {
     try {
-      // Fetch the list of products from the 'products' collection
       final result = await client.collection('products').getList();
 
-      // Map the response items to Product model
       return result.items.map((item) => Product.fromJson(item.toJson())).toList();
     } catch (e) {
       throw Exception('Failed to load products: $e');
@@ -29,11 +25,10 @@ class ProductService {
   }
   Future<List<Product>> fetchProductsByCategory(String categoryId) async {
     try {
-      // Fetch products filtered by category
       final result = await client.collection('products').getList(
         page: 1,
-        perPage: 50, // Adjust perPage based on your needs
-        filter: 'category_id = "$categoryId"', // Ensure 'category' matches your schema
+        perPage: 50,
+        filter: 'category_id = "$categoryId"',
       );
 
       if (result.items.isEmpty) {

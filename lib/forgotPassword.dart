@@ -84,22 +84,25 @@ class Forgotpassword extends StatelessWidget {
                               context: context,
                               barrierDismissible: false,
                               builder: (BuildContext context) {
-                                return Center(child: CircularProgressIndicator());
+                                return Center(
+                                    child: CircularProgressIndicator());
                               },
                             );
 
                             final emailPass = email.text.trim();
-                            final success = await auth.requestPasswordReset(emailPass);
+                            final success =
+                                await auth.requestPasswordReset(emailPass);
 
-                            Navigator.pop(context); // Close the loading dialog
+                            Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
                                   success
                                       ? 'Password reset email sent! Please check your inbox.'
                                       : 'Failed to send reset email. Please try again.',
-                                 ),
-                                backgroundColor: success ? Colors.green : Colors.red,
+                                ),
+                                backgroundColor:
+                                    success ? Colors.green : Colors.red,
                               ),
                             );
                           }

@@ -144,7 +144,7 @@ class _WishlistState extends ConsumerState<Wishlist> {
                   left: Radius.circular(12),
                 ),
                 child: Image.network(
-                  product.getImageUrl(getBaseUrl() as String),
+                  product.getImageUrl(getBaseUrl()),
                   width: 140,
                   height: 140,
                   fit: BoxFit.cover,

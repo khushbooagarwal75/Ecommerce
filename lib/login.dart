@@ -41,7 +41,6 @@ class _LoginState extends ConsumerState<Login> {
 
   @override
   Widget build(BuildContext context) {
-    // Watching password visibility state
     final isPasswordVisible = ref.watch(passwordVisibilityProvider);
 
     return SafeArea(
@@ -125,9 +124,10 @@ class _LoginState extends ConsumerState<Login> {
                       const SizedBox(height: 60),
                       Custombutton(
                         text: "Login",
-                        onPressed:  () async {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final authService = ref.read(pocketBaseAuthProvider);
+                            final authService =
+                                ref.read(pocketBaseAuthProvider);
                             try {
                               //AB BTA KY KRNA MERA PHONE PR MSG KUCH MT KRN VO LEGYI
                               await authService.loginUser(
@@ -136,20 +136,24 @@ class _LoginState extends ConsumerState<Login> {
                               );
 
                               // Debugging to check if the login was successful
-                              final loggedInUserId = authService.getLoggedInUserId();
+                              final loggedInUserId =
+                                  authService.getLoggedInUserId();
                               // If no user ID, handle the error
                               if (loggedInUserId == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Login failed. No user ID found.")),
+                                  SnackBar(
+                                      content: Text(
+                                          "Login failed. No user ID found.")),
                                 );
                                 return;
                               }
-
-                              // Storing user data in SharedPreferences
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              await prefs.setString("userEmail", emailController.text);
-                              await prefs.setString("userId", loggedInUserId.toString());
-                              await prefs.setBool("isLoggedIn",true);
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  "userEmail", emailController.text);
+                              await prefs.setString(
+                                  "userId", loggedInUserId.toString());
+                              await prefs.setBool("isLoggedIn", true);
                               print("preference set");
 
                               // Navigating to the next screen
@@ -162,7 +166,9 @@ class _LoginState extends ConsumerState<Login> {
                             } catch (e) {
                               print('Login Error: $e');
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Login Failed! Email or password is incorrect")),
+                                SnackBar(
+                                    content: Text(
+                                        "Login Failed! Email or password is incorrect")),
                               );
                             }
                           }

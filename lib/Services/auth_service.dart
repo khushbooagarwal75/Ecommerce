@@ -1,15 +1,11 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 
 class PocketBaseAuthService {
   final PocketBase client;
 
   PocketBaseAuthService(this.client);
 
-  // Register a new user
   Future<void> registerUser(String email, String password) async {
     await client.collection('users').create(body: {
       'email': email,
@@ -18,7 +14,6 @@ class PocketBaseAuthService {
     });
   }
 
-  // Log in a user
   Future<void> loginUser(String email, String password) async {
     await client.collection('users').authWithPassword(email, password);
     _userEmail = email; // Store the logged-in user's email
@@ -28,7 +23,7 @@ class PocketBaseAuthService {
 
   String? get loggedInUserEmail => _userEmail;
 
-  // Logout the user
+
   void logoutUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -57,8 +52,6 @@ class PocketBaseAuthService {
         print("User does not exist.");
         return;
       }
-
-      // If the user exists, update the record
       final updatedRecord = await client.collection('users').update(recordId, body: data);
       print("Record updated: $updatedRecord");
     } catch (e) {
@@ -91,7 +84,6 @@ class PocketBaseAuthService {
     }
   }
 
-  // Confirm password reset using token
   Future<void> confirmPasswordReset(String resetToken, String newPassword) async {
     try {
       await client.collection('users').confirmPasswordReset(

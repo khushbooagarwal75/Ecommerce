@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:ecommerce_app/Services/auth_service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
 import 'package:ecommerce_app/menu.dart';
-import 'package:ecommerce_app/navigationMenuPages/home.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +32,7 @@ class _ProfileState extends ConsumerState<Profile> {
   late String dropdownValue = city.first;
   final List<String> city = ["Gujarat", "Maharashtra", "Uttar Pradesh"];
   final PocketBaseAuthService authService =
-  PocketBaseAuthService(PocketBase(getBaseUrl()));
+      PocketBaseAuthService(PocketBase(getBaseUrl()));
   String? currentUserId;
   final ImagePicker profilePic = ImagePicker();
   XFile? _image;
@@ -54,11 +52,13 @@ class _ProfileState extends ConsumerState<Profile> {
 
     if (currentUserId != null) {
       try {
-        final fetchedUserRecord = await authService.fetchUserDetails(currentUserId!); // This is where you get the user's data
+        final fetchedUserRecord = await authService.fetchUserDetails(
+            currentUserId!);
         if (fetchedUserRecord != null) {
           setState(() {
-            userRecord = fetchedUserRecord; // Store the fetched user record
-            String avatarUrl = userRecord["avatar"] ?? '';  // Assuming "avatar" field contains the image URL
+            userRecord = fetchedUserRecord;
+            String avatarUrl = userRecord["avatar"] ??
+                '';
             _image = avatarUrl.isNotEmpty ? XFile(avatarUrl) : null;
 
             pincode.text = userRecord["pincode"]?.toString() ?? "";
@@ -68,7 +68,8 @@ class _ProfileState extends ConsumerState<Profile> {
             accountNo.text = userRecord["accountNo"] ?? "";
             accountHolderName.text = userRecord["accountHolderName"] ?? "";
             ifsc.text = userRecord["ifscCode"] ?? "";
-            dropdownValue = userRecord["state"] ?? city.first; // Default to first city if no state
+            dropdownValue = userRecord["state"] ??
+                city.first; // Default to first city if no state
           });
         }
       } catch (e) {
@@ -79,12 +80,12 @@ class _ProfileState extends ConsumerState<Profile> {
 
     if (currentUserId != null) {
       try {
-        final userRecord = await authService.fetchUserDetails(currentUserId!); // This is where you get the user's data
+        final userRecord = await authService.fetchUserDetails(
+            currentUserId!);
         if (userRecord != null) {
           setState(() {
-            // Populate the fields with the saved data
-
-            String avatarUrl = userRecord["avatar"] ?? '';  // Assuming "avatar" field contains the image URL
+          String avatarUrl = userRecord["avatar"] ??
+                '';
             _image = avatarUrl.isNotEmpty ? XFile(avatarUrl) : null;
 
             pincode.text = userRecord["pincode"]?.toString() ?? "";
@@ -93,12 +94,12 @@ class _ProfileState extends ConsumerState<Profile> {
             country.text = userRecord["country"] ?? "";
             accountNo.text = userRecord["accountNo"].toString() ?? "";
             accountHolderName.text = userRecord["accountHolderName"] ?? "";
-            ifsc.text = userRecord["ifscCode"].toString()  ?? "";
-            dropdownValue = userRecord["state"] ?? city.first; // Default to first city if no state
+            ifsc.text = userRecord["ifscCode"].toString() ?? "";
+            dropdownValue = userRecord["state"] ??
+                city.first; // Default to first city if no state
           });
         }
       } catch (e) {
-        // Handle any errors while fetching user data
         print("Error fetching user data: $e");
       }
     }
@@ -121,7 +122,7 @@ class _ProfileState extends ConsumerState<Profile> {
   Widget build(BuildContext context) {
     Future getImage() async {
       final XFile? image =
-      await profilePic.pickImage(source: ImageSource.gallery);
+          await profilePic.pickImage(source: ImageSource.gallery);
 
       setState(() {
         _image = image;
@@ -134,7 +135,7 @@ class _ProfileState extends ConsumerState<Profile> {
         child: SingleChildScrollView(
           child: Padding(
             padding:
-            const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -150,11 +151,16 @@ class _ProfileState extends ConsumerState<Profile> {
                               radius: 70,
                               backgroundColor: Colors.grey[200],
                               backgroundImage: _image != null
-                                  ? FileImage(File(_image!.path)) // If _image is not null, use it
-                                  : (_image == null && userRecord["avatar"] != null && userRecord["avatar"].isNotEmpty
-                                  ? NetworkImage(userRecord["avatar"])  // Fetch from URL if available
-                                  : AssetImage("assets/images/user_avatar.png"))
-                              as ImageProvider,
+                                  ? FileImage(File(_image!
+                                      .path)) // If _image is not null, use it
+                                  : (_image == null &&
+                                              userRecord["avatar"] != null &&
+                                              userRecord["avatar"].isNotEmpty
+                                          ? NetworkImage(userRecord[
+                                              "avatar"]) // Fetch from URL if available
+                                          : AssetImage(
+                                              "assets/images/user_avatar.png"))
+                                      as ImageProvider,
                             ),
                             Positioned(
                               bottom: 0,
@@ -207,8 +213,6 @@ class _ProfileState extends ConsumerState<Profile> {
                     ),
                   ),
                 ),
-
-                // Business Address Section
                 _buildSectionTitle("Business Address Details"),
                 _buildTextField(
                   controller: pincode,
@@ -266,7 +270,9 @@ class _ProfileState extends ConsumerState<Profile> {
 
                       final data = {
                         if (avatarUrl != null) 'avatar': avatarUrl,
-                        'pincode': pincode.text.isNotEmpty ? int.tryParse(pincode.text) : null,
+                        'pincode': pincode.text.isNotEmpty
+                            ? int.tryParse(pincode.text)
+                            : null,
                         'address': address.text.trim(),
                         'city': cityController.text.trim(),
                         'state': dropdownValue.trim(),
@@ -289,7 +295,9 @@ class _ProfileState extends ConsumerState<Profile> {
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Error updating user: ${e.toString()}")),
+                          SnackBar(
+                              content:
+                                  Text("Error updating user: ${e.toString()}")),
                         );
                       }
                     } else {
@@ -298,7 +306,6 @@ class _ProfileState extends ConsumerState<Profile> {
                       );
                     }
                   },
-
                 ),
               ],
             ),
@@ -355,7 +362,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 borderSide: BorderSide.none,
               ),
               contentPadding:
-              EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),
           ),
         ],
@@ -411,18 +418,21 @@ class _ProfileState extends ConsumerState<Profile> {
 
   Future<String?> uploadProfilePicture(XFile image) async {
     try {
-      final uri = Uri.parse('https://cartify-ecommerce.pockethost.io/api/files/users'); // Update with actual API
+      final uri = Uri.parse(
+          'https://cartify-ecommerce.pockethost.io/api/files/users'); // Update with actual API
       final request = http.MultipartRequest('POST', uri);
 
       final file = File(image.path);
-      final multipartFile = await http.MultipartFile.fromPath('file', file.path);
+      final multipartFile =
+          await http.MultipartFile.fromPath('file', file.path);
       request.files.add(multipartFile);
 
       final response = await request.send();
       if (response.statusCode == 200) {
         final responseBody = await response.stream.bytesToString();
         final responseJson = jsonDecode(responseBody);
-        return responseJson['url']; // Adjust key based on PocketBase API response
+        return responseJson[
+            'url']; // Adjust key based on PocketBase API response
       } else {
         print('File upload failed with status: ${response.statusCode}');
         return null;
@@ -432,5 +442,4 @@ class _ProfileState extends ConsumerState<Profile> {
       return null;
     }
   }
-
 }

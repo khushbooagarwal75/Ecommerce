@@ -51,8 +51,6 @@ class _PaymentState extends ConsumerState<Payment> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Checkout"),
@@ -103,7 +101,8 @@ class _PaymentState extends ConsumerState<Payment> {
                 Divider(height: 2),
                 SizedBox(height: 20),
                 Text("Payment",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 SizedBox(height: 10),
 
                 // Payment methods
@@ -115,7 +114,7 @@ class _PaymentState extends ConsumerState<Payment> {
                         _buildPaymentMethodCard(
                           "Cash on delivery",
                           value,
-                              (method) {
+                          (method) {
                             selectedPaymentMethod.value = method;
                             paymentMethod = method;
                             paymentStatus = "Pending";
@@ -125,7 +124,7 @@ class _PaymentState extends ConsumerState<Payment> {
                         _buildPaymentMethodCard(
                           "Credit Card",
                           value,
-                              (method) {
+                          (method) {
                             selectedPaymentMethod.value = method;
                             paymentMethod = method;
                             paymentStatus = "Success";
@@ -135,7 +134,7 @@ class _PaymentState extends ConsumerState<Payment> {
                         _buildPaymentMethodCard(
                           "Debit Card",
                           value,
-                              (method) {
+                          (method) {
                             selectedPaymentMethod.value = method;
                             paymentMethod = method;
                             paymentStatus = "Success";
@@ -147,7 +146,6 @@ class _PaymentState extends ConsumerState<Payment> {
                 ),
                 SizedBox(height: 20),
 
-                // Continue button
                 ValueListenableBuilder<String?>(
                   valueListenable: selectedPaymentMethod,
                   builder: (context, value, child) {
@@ -160,34 +158,33 @@ class _PaymentState extends ConsumerState<Payment> {
                       ),
                       onPressed: value != null
                           ? () async {
-                        if (userId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("User not logged in")),
-                          );
-                          return;
-                        }
+                              if (userId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("User not logged in")),
+                                );
+                                return;
+                              }
+                              try {
+                                print("Product ID: ${product.id}");
+                                print("Payment Method: $paymentMethod");
+                                print("Payment Status: $paymentStatus");
 
-                        try {
-                          print("Product ID: ${product.id}");
-                          print("Payment Method: $paymentMethod");
-                          print("Payment Status: $paymentStatus");
+                                await orderService.createOrder(
+                                  product.id,
+                                  userId!,
+                                  paymentMethod!,
+                                  paymentStatus!,
+                                );
 
-                          await orderService.createOrder(
-                            product.id,
-                            userId!,
-                            paymentMethod!,
-                            paymentStatus!,
-                          );
-
-                          _handlePayment(context);
-                        } catch (e) {
-                          print("Error during order creation: $e");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Error: $e")),
-                          );
-                        }
-                      }
-                          : null, // Disable the button if no method is selected
+                                _handlePayment(context);
+                              } catch (e) {
+                                print("Error during order creation: $e");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Error: $e")),
+                                );
+                              }
+                            }
+                          : null,
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -251,27 +248,25 @@ class _PaymentState extends ConsumerState<Payment> {
         );
       },
     );
-
-    // Simulate a delay for the dialog to show
     await Future.delayed(const Duration(seconds: 2));
 
     // Navigate to the next screen after the delay
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => Myorders(), // Navigate to the MyOrders page
+        builder: (context) => Myorders(),
       ),
-          (route) => route.isFirst,  // This removes all routes except the first one (home page)
+      (route) => route
+          .isFirst,
     );
-
   }
 
-  // Helper method to build payment method card
+
   Widget _buildPaymentMethodCard(
-      String methodName,
-      String? selectedMethod,
-      ValueChanged<String> onSelect,
-      ) {
+    String methodName,
+    String? selectedMethod,
+    ValueChanged<String> onSelect,
+  ) {
     final bool isSelected = selectedMethod == methodName;
 
     return GestureDetector(
@@ -281,11 +276,11 @@ class _PaymentState extends ConsumerState<Payment> {
       child: Card(
         shape: isSelected
             ? OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.black,
-            width: 2,
-          ),
-        )
+                borderSide: BorderSide(
+                  color: Colors.black,
+                  width: 2,
+                ),
+              )
             : null,
         color: Colors.grey.shade200,
         child: Row(
@@ -307,7 +302,6 @@ class _PaymentState extends ConsumerState<Payment> {
     );
   }
 
-  // Helper method to build summary row
   Widget _buildSummaryRow(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

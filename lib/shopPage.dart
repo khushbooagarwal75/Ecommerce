@@ -1,9 +1,7 @@
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/model/product_model.dart';
 import 'package:ecommerce_app/model/wishlist_model.dart';
-import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,12 +31,14 @@ class _ShoppageState extends ConsumerState<Shoppage> {
     // Use ref.read() to get the userId once
     loadUserData();
   }
+
   Future<void> loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       currentUserId = prefs.getString('userId');
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final wishlistService = ref.read(wishlistServiceProvider);
@@ -64,7 +64,8 @@ class _ShoppageState extends ConsumerState<Shoppage> {
         actions: [
           wishlistFuture.when(
             data: (wishlistItems) {
-              isWishlisted = wishlistItems.any((item) => item.productId == widget.id);
+              isWishlisted =
+                  wishlistItems.any((item) => item.productId == widget.id);
 
               return IconButton(
                 onPressed: () async {
@@ -77,7 +78,8 @@ class _ShoppageState extends ConsumerState<Shoppage> {
                     return;
                   }
 
-                  final wishlistItem = WishlistItem(userId: currentUserId!, productId: widget.id);
+                  final wishlistItem = WishlistItem(
+                      userId: currentUserId!, productId: widget.id);
 
                   try {
                     await wishlistService.addToWishlist(wishlistItem);
@@ -123,9 +125,13 @@ class _ShoppageState extends ConsumerState<Shoppage> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Image.network(product.getImageUrl(getBaseUrl() as String),)),
-              SizedBox(height: 10,),
-
+              Center(
+                  child: Image.network(
+                product.getImageUrl(getBaseUrl()),
+              )),
+              SizedBox(
+                height: 10,
+              ),
               Text(product.product_desc),
               SizedBox(height: 10),
               Padding(
@@ -163,7 +169,7 @@ class _ShoppageState extends ConsumerState<Shoppage> {
                         ),
                       ),
                       onPressed: () {
-                        if(currentUserId!=null){
+                        if (currentUserId != null) {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return Checkout(

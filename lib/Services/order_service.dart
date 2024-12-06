@@ -36,12 +36,12 @@ class OrderService {
 
       return records.map((record) {
         try {
-          return Order.fromJson(record.data); // Map PocketBase response to Order model
+          return Order.fromJson(record.data);
         } catch (e) {
           print("Error parsing record: ${record.data}, error: $e");
-          return null; // Skip invalid records
+          return null;
         }
-      }).whereType<Order>().toList(); // Remove nulls
+      }).whereType<Order>().toList();
     } catch (e) {
       print("Error fetching orders for userEmail $userEmail: $e");
       return [];
