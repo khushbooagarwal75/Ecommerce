@@ -198,7 +198,7 @@ class _SignupState extends ConsumerState<Signup> {
                 const SizedBox(height: 80),
                 Socialnetworks(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => Login(),

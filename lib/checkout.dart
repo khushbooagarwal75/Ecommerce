@@ -13,7 +13,6 @@ class Checkout extends ConsumerStatefulWidget {
   final String id;
   final ProductService productService;
 
-
   const Checkout({
     super.key,
     required this.id,
@@ -56,49 +55,46 @@ class _CheckoutState extends ConsumerState<Checkout> {
     super.dispose();
   }
 
+  void _showAddAddressDialog(BuildContext context, {String? userAddress}) {
+    addressController.text = userAddress ?? '';
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Add Address"),
+          content: TextField(
+            controller: addressController,
+            decoration: const InputDecoration(hintText: "Enter your address"),
+            maxLines: 3,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                String newAddress = addressController.text.trim();
+                if (newAddress.isNotEmpty) {
+                  authService.updateRecord(userId!, {"address": newAddress}).then((_) {
+                    Navigator.pop(context);
+                    setState(() {
+                      currentAddress = newAddress;
+                    });
+                  });
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    void _showAddAddressDialog(BuildContext context, {String? userAddress}) {
-      addressController.text = userAddress ?? '';
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Add Address"),
-            content: TextField(
-              controller: addressController,
-              decoration: InputDecoration(hintText: "Enter your address"),
-              maxLines: 3,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () {
-                  String newAddress = addressController.text.trim();
-                  if (newAddress.isNotEmpty) {
-                    authService.updateRecord(userId!, {"address": newAddress}).then((_) {
-                      Navigator.pop(context);
-                      setState(() {
-                        currentAddress = newAddress;  // Update the address in the UI
-                      });
-                    });
-                  }
-                },
-                child: Text("Save"),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
     if (userId == null) {
-      // Show loading indicator while `userId` is being fetched
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -109,9 +105,7 @@ class _CheckoutState extends ConsumerState<Checkout> {
         title: const Text("Checkout"),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
@@ -134,11 +128,11 @@ class _CheckoutState extends ConsumerState<Checkout> {
                 return const Center(child: CircularProgressIndicator());
               } else if (addressSnapshot.hasError) {
                 return Center(
-                    child: Text('Error Fetching Address: ${addressSnapshot.error}'));
+                  child: Text('Error Fetching Address: ${addressSnapshot.error}'),
+                );
               }
 
-              final address = addressSnapshot.data?['address'] ?? 'No address found';
-              currentAddress = address; // Store the initial address
+              currentAddress = addressSnapshot.data?['address'];
 
               return SingleChildScrollView(
                 child: Padding(
@@ -154,8 +148,7 @@ class _CheckoutState extends ConsumerState<Checkout> {
                           SizedBox(width: 5),
                           Text(
                             "Delivery Address",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
                       ),
@@ -167,25 +160,23 @@ class _CheckoutState extends ConsumerState<Checkout> {
                               color: Colors.white,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text("Address: $currentAddress"),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            if (currentAddress == null || currentAddress!.isEmpty) {
-                                              _showAddAddressDialog(context);  // Show add address dialog
-                                            } else {
-                                              _showAddAddressDialog(context, userAddress: currentAddress);  // Edit existing address
-                                            }
-                                          },
-                                          icon: const Icon(Icons.edit, size: 20),
-                                        ),
-                                      ],
+                                    Expanded(
+                                      child: Text(
+                                        currentAddress == null || currentAddress!.isEmpty
+                                            ? "No address found"
+                                            : "Address: $currentAddress",
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        _showAddAddressDialog(
+                                          context,
+                                          userAddress: currentAddress,
+                                        );
+                                      },
+                                      icon: const Icon(Icons.edit, size: 20),
                                     ),
                                   ],
                                 ),
@@ -197,8 +188,7 @@ class _CheckoutState extends ConsumerState<Checkout> {
                       const SizedBox(height: 10),
                       const Text(
                         "Shopping List",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 5),
                       Card(
@@ -216,8 +206,7 @@ class _CheckoutState extends ConsumerState<Checkout> {
                                   const SizedBox(width: 10),
                                   Flexible(
                                     child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           product.product_name,
@@ -236,8 +225,7 @@ class _CheckoutState extends ConsumerState<Checkout> {
                               const Divider(height: 1),
                               const SizedBox(height: 10),
                               Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text("Total Order (1):"),
                                   Text(product.product_price.toString()),
@@ -249,12 +237,18 @@ class _CheckoutState extends ConsumerState<Checkout> {
                       ),
                       Custombutton(
                         text: "Continue",
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return Placeorder(
+                        onPressed: currentAddress == null || currentAddress!.isEmpty
+                            ? () => _showAddAddressDialog(context)
+                            : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Placeorder(
                                 id: product.id,
-                                productService: widget.productService);
-                          },));
+                                productService: widget.productService,
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ],

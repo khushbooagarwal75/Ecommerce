@@ -43,18 +43,20 @@ dependencies:
   device_info_plus: ^11.1.1
   shared_preferences: ^2.3.3
   image_picker: ^1.1.2
-  flutter_launcher_icons: ^0.14.1
-
+  flutter_launcher_icons: ^0.9.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-flutter_launcher_icon:
-  android: true
+flutter_icons:
+  android: "ic_launcher"
   ios: true
   image_path: "assets/images/cartify.png"
-  adaptive_icon_background: "assets/images/cartify.png"
+  min_sdk_android: 21
+  adaptive_icon_foreground: "assets/images/cartify.png"
+  adaptive_icon_background: "#000000"
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

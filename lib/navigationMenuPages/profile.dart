@@ -1,15 +1,18 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecommerce_app/Services/auth_service.dart';
 import 'package:ecommerce_app/components/customButton.dart';
 import 'package:ecommerce_app/forgotPassword.dart';
+import 'package:ecommerce_app/menu.dart';
 import 'package:ecommerce_app/navigationMenuPages/home.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -35,6 +38,7 @@ class _ProfileState extends ConsumerState<Profile> {
   String? currentUserId;
   final ImagePicker profilePic = ImagePicker();
   XFile? _image;
+  Map<String, dynamic> userRecord = {};
 
   @override
   void initState() {
@@ -47,6 +51,57 @@ class _ProfileState extends ConsumerState<Profile> {
     setState(() {
       currentUserId = prefs.getString('userId');
     });
+
+    if (currentUserId != null) {
+      try {
+        final fetchedUserRecord = await authService.fetchUserDetails(currentUserId!); // This is where you get the user's data
+        if (fetchedUserRecord != null) {
+          setState(() {
+            userRecord = fetchedUserRecord; // Store the fetched user record
+            String avatarUrl = userRecord["avatar"] ?? '';  // Assuming "avatar" field contains the image URL
+            _image = avatarUrl.isNotEmpty ? XFile(avatarUrl) : null;
+
+            pincode.text = userRecord["pincode"]?.toString() ?? "";
+            address.text = userRecord["address"] ?? "";
+            cityController.text = userRecord["city"] ?? "";
+            country.text = userRecord["country"] ?? "";
+            accountNo.text = userRecord["accountNo"] ?? "";
+            accountHolderName.text = userRecord["accountHolderName"] ?? "";
+            ifsc.text = userRecord["ifscCode"] ?? "";
+            dropdownValue = userRecord["state"] ?? city.first; // Default to first city if no state
+          });
+        }
+      } catch (e) {
+        // Handle any errors while fetching user data
+        print("Error fetching user data: $e");
+      }
+    }
+
+    if (currentUserId != null) {
+      try {
+        final userRecord = await authService.fetchUserDetails(currentUserId!); // This is where you get the user's data
+        if (userRecord != null) {
+          setState(() {
+            // Populate the fields with the saved data
+
+            String avatarUrl = userRecord["avatar"] ?? '';  // Assuming "avatar" field contains the image URL
+            _image = avatarUrl.isNotEmpty ? XFile(avatarUrl) : null;
+
+            pincode.text = userRecord["pincode"]?.toString() ?? "";
+            address.text = userRecord["address"] ?? "";
+            cityController.text = userRecord["city"] ?? "";
+            country.text = userRecord["country"] ?? "";
+            accountNo.text = userRecord["accountNo"].toString() ?? "";
+            accountHolderName.text = userRecord["accountHolderName"] ?? "";
+            ifsc.text = userRecord["ifscCode"].toString()  ?? "";
+            dropdownValue = userRecord["state"] ?? city.first; // Default to first city if no state
+          });
+        }
+      } catch (e) {
+        // Handle any errors while fetching user data
+        print("Error fetching user data: $e");
+      }
+    }
   }
 
   @override
@@ -59,7 +114,6 @@ class _ProfileState extends ConsumerState<Profile> {
     accountNo.dispose();
     accountHolderName.dispose();
     ifsc.dispose();
-
     super.dispose();
   }
 
@@ -96,8 +150,10 @@ class _ProfileState extends ConsumerState<Profile> {
                               radius: 70,
                               backgroundColor: Colors.grey[200],
                               backgroundImage: _image != null
-                                  ? FileImage(File(_image!.path))
-                                  : AssetImage("assets/images/user_avatar.png")
+                                  ? FileImage(File(_image!.path)) // If _image is not null, use it
+                                  : (_image == null && userRecord["avatar"] != null && userRecord["avatar"].isNotEmpty
+                                  ? NetworkImage(userRecord["avatar"])  // Fetch from URL if available
+                                  : AssetImage("assets/images/user_avatar.png"))
                               as ImageProvider,
                             ),
                             Positioned(
@@ -203,36 +259,37 @@ class _ProfileState extends ConsumerState<Profile> {
                   text: "Save Changes",
                   onPressed: () async {
                     if (currentUserId != null) {
+                      String? avatarUrl;
+                      if (_image != null) {
+                        avatarUrl = await uploadProfilePicture(_image!);
+                      }
+
                       final data = {
-                        "avatar": _image != null ? _image!.path : null,
-                        "pincode": pincode.text.isNotEmpty
-                            ? int.tryParse(pincode.text)
-                            : null,
-                        "address": address.text.trim(),
-                        "city": cityController.text.trim(),
-                        "state": dropdownValue.trim(),
-                        "country": country.text.trim(),
-                        "accountNo": accountNo.text.trim(),
-                        "accountHolderName": accountHolderName.text.trim(),
-                        "ifscCode": ifsc.text.trim(),
+                        if (avatarUrl != null) 'avatar': avatarUrl,
+                        'pincode': pincode.text.isNotEmpty ? int.tryParse(pincode.text) : null,
+                        'address': address.text.trim(),
+                        'city': cityController.text.trim(),
+                        'state': dropdownValue.trim(),
+                        'country': country.text.trim(),
+                        'accountNo': accountNo.text.trim(),
+                        'accountHolderName': accountHolderName.text.trim(),
+                        'ifscCode': ifsc.text.trim(),
                       };
 
-                      // Remove null fields
                       data.removeWhere((key, value) => value == null);
-
-                      print("Data to update: $data"); // Log the data being passed
 
                       try {
                         await authService.updateRecord(currentUserId!, data);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("User information updated!")),
                         );
-                       Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Menu()),
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Error updating user: ${e.toString()}"),
-                          ),
+                          SnackBar(content: Text("Error updating user: ${e.toString()}")),
                         );
                       }
                     } else {
@@ -241,6 +298,7 @@ class _ProfileState extends ConsumerState<Profile> {
                       );
                     }
                   },
+
                 ),
               ],
             ),
@@ -325,28 +383,54 @@ class _ProfileState extends ConsumerState<Profile> {
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DropdownButton(
-                  value: dropdownValue,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  dropdownColor: Colors.white,
-                  items: city.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
+              child: DropdownButton<String>(
+                value: dropdownValue,
+                icon: Icon(Icons.arrow_drop_down),
+                isExpanded: true,
+                style: TextStyle(color: Colors.black),
+                underline: SizedBox(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue!;
+                  });
+                },
+                items: city.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      dropdownValue = value!;
-                    });
-                  },
-                ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ],
         ));
   }
+
+  Future<String?> uploadProfilePicture(XFile image) async {
+    try {
+      final uri = Uri.parse('https://cartify-ecommerce.pockethost.io/api/files/users'); // Update with actual API
+      final request = http.MultipartRequest('POST', uri);
+
+      final file = File(image.path);
+      final multipartFile = await http.MultipartFile.fromPath('file', file.path);
+      request.files.add(multipartFile);
+
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        final responseJson = jsonDecode(responseBody);
+        return responseJson['url']; // Adjust key based on PocketBase API response
+      } else {
+        print('File upload failed with status: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error uploading file: $e');
+      return null;
+    }
+  }
+
 }

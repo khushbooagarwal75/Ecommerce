@@ -1,50 +1,111 @@
-
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:ecommerce_app/Services/product__service.dart';
 import 'package:ecommerce_app/checkout.dart';
 import 'package:ecommerce_app/model/product_model.dart';
-import 'package:ecommerce_app/navigationMenuPages/myOrders.dart';
+import 'package:ecommerce_app/model/wishlist_model.dart';
+import 'package:ecommerce_app/placeOrder.dart';
 import 'package:ecommerce_app/provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class Shoppage extends StatefulWidget {
+
+class Shoppage extends ConsumerStatefulWidget {
   final String id;
   final ProductService productService;
 
-  const Shoppage({super.key, required this.id, required this.productService});
+  const Shoppage({
+    super.key,
+    required this.id,
+    required this.productService,
+  });
 
   @override
-  State<Shoppage> createState() => _ShoppageState();
+  ConsumerState<Shoppage> createState() => _ShoppageState();
 }
 
-class _ShoppageState extends State<Shoppage> {
+class _ShoppageState extends ConsumerState<Shoppage> {
+  bool isWishlisted = false;
   String? currentUserId;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Use ref.read() to get the userId once
     loadUserData();
   }
-
   Future<void> loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       currentUserId = prefs.getString('userId');
     });
   }
-
   @override
   Widget build(BuildContext context) {
+    final wishlistService = ref.read(wishlistServiceProvider);
+
+    if (currentUserId == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final wishlistFuture = ref.watch(wishlistProvider(currentUserId!));
+
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        title: const Text("Shopping Bag"),
+        centerTitle: true,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back_ios_new_outlined),
+          icon: const Icon(Icons.arrow_back_ios),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
+          wishlistFuture.when(
+            data: (wishlistItems) {
+              isWishlisted = wishlistItems.any((item) => item.productId == widget.id);
+
+              return IconButton(
+                onPressed: () async {
+                  if (isWishlisted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Item is already in your wishlist."),
+                      ),
+                    );
+                    return;
+                  }
+
+                  final wishlistItem = WishlistItem(userId: currentUserId!, productId: widget.id);
+
+                  try {
+                    await wishlistService.addToWishlist(wishlistItem);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Item added to wishlist!"),
+                      ),
+                    );
+                    setState(() {
+                      isWishlisted = true;
+                    });
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error adding to wishlist: $e"),
+                      ),
+                    );
+                  }
+                },
+                icon: Icon(
+                  Icons.favorite,
+                  color: isWishlisted ? Colors.red : Colors.grey,
+                ),
+              );
+            },
+            loading: () => const CircularProgressIndicator(),
+            error: (error, _) => const Icon(Icons.error, color: Colors.red),
+          ),
         ],
       ),
       body: FutureBuilder<Product>(
@@ -59,242 +120,76 @@ class _ShoppageState extends State<Shoppage> {
           }
 
           final product = snapshot.data!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Image.network(product.getImageUrl(getBaseUrl() as String),)),
+              SizedBox(height: 10,),
 
-          return SingleChildScrollView(
-<<<<<<< HEAD
-            child: IntrinsicHeight(
-=======
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product Image
-                  Center(
-                    child: Image.network(
-                      product.getImageUrl(getBaseUrl() as String),
-                      width: double.infinity,
-                      height: 250,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-<<<<<<< HEAD
-                  const SizedBox(height: 30),
-                  // Size Section
-
-
-                  // Product Description
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Product Description:",
-                          style: TextStyle(fontSize: 16, fontWeight:FontWeight.bold,height: 1.5),
+              Text(product.product_desc),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
                         ),
-                        Text(
-                          product.product_desc,
-                          style: TextStyle(fontSize: 16, height: 1.5),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Price:",
-                          style: TextStyle(fontSize: 16, fontWeight:FontWeight.bold,height: 1.5),
-                        ),
-                        Text(
-                          product.product_price.toString(),
-                          style: TextStyle(fontSize: 16, height: 1.5),
-=======
-                  const SizedBox(height: 10),
-
-                  // Dots Indicator
-                  Center(
-                    child: DotsIndicator(
-                      dotsCount: 4,
-                      decorator: DotsDecorator(
-                        activeColor: Colors.red,
-                        size: Size(10, 10),
-                        activeSize: Size(12, 12),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                              backgroundColor: Colors.blueAccent,
+                              child: Icon(Icons.shopping_cart)),
+                          Text(
+                            "Go to cart",
+                            style: TextStyle(color: Colors.white, fontSize: 22),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Size Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Size: ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                    Spacer(),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
                         ),
-                        Card(
-                          shape: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              product.id,
-                              style: TextStyle(color: Colors.red, fontSize: 12),
-                            ),
-                          ),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-                        ),
-                      ],
-                    ),
-                  ),
-<<<<<<< HEAD
-                  const SizedBox(height: 20),
-                  // Spacer to push the buttons to the bottom
-                  Spacer(),
-
-                  // Action Buttons at the Bottom
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
-=======
-                  const SizedBox(height: 10),
-
-                  // Product Description
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      product.product_desc,
-                      style: TextStyle(fontSize: 16, height: 1.5),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Action Buttons
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-                    child: Row(
-                      children: [
-                        // Go to Cart Button
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent,
-                              shape: RoundedRectangleBorder(
-<<<<<<< HEAD
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return Myorders();
-                              },));
-=======
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
+                      ),
+                      onPressed: () {
+                        if(currentUserId!=null){
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return Checkout(
+                                id: product.id,
+                                productService: widget.productService,
+                              );
                             },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-<<<<<<< HEAD
-                                  backgroundColor: Colors.white,
-                                  child: Icon(Icons.shopping_cart,
-                                      color: Colors.blueAccent),
-                                ),
-                                const SizedBox(width: 10),
-=======
-                                    backgroundColor: Colors.white,
-                                    child: Icon(Icons.shopping_cart,
-                                        color: Colors.blueAccent)),
-                                const SizedBox(width: 8),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-                                Text(
-                                  "Go to cart",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-<<<<<<< HEAD
-                        const SizedBox(width: 16),
-=======
-                        const SizedBox(width: 10),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-                        // Buy Now Button
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
+                          ));
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          CircleAvatar(
                               backgroundColor: Colors.green,
-                              shape: RoundedRectangleBorder(
-<<<<<<< HEAD
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 14),
-=======
-                                borderRadius: BorderRadius.circular(4),
-                              ),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-                            ),
-                            onPressed: () {
-                              if (currentUserId != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return Checkout(
-                                        id: product.id,
-                                        productService: widget.productService,
-                                      );
-                                    },
-                                  ),
-                                );
-                              }
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-<<<<<<< HEAD
-                                  backgroundColor: Colors.white,
-                                  child: Icon(Icons.money, color: Colors.green),
-                                ),
-                                const SizedBox(width: 10),
-=======
-                                    backgroundColor: Colors.white,
-                                    child:
-                                        Icon(Icons.money, color: Colors.green)),
-                                const SizedBox(width: 8),
->>>>>>> c39fedfb5b686433f3396d12fd3d98165486350b
-                                Text(
-                                  "Buy Now",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                ),
-                              ],
-                            ),
+                              child: Icon(Icons.money)),
+                          Text(
+                            "Buy Now",
+                            style: TextStyle(color: Colors.white, fontSize: 22),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           );
         },
       ),

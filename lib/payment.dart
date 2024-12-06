@@ -256,14 +256,14 @@ class _PaymentState extends ConsumerState<Payment> {
     await Future.delayed(const Duration(seconds: 2));
 
     // Navigate to the next screen after the delay
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) {
-          return Myorders(); // Navigate to the next page
-        },
+        builder: (context) => Myorders(), // Navigate to the MyOrders page
       ),
+          (route) => route.isFirst,  // This removes all routes except the first one (home page)
     );
+
   }
 
   // Helper method to build payment method card
