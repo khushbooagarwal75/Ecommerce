@@ -1,11 +1,8 @@
 import 'package:ecommerce_app/Services/order_service.dart';
 import 'package:ecommerce_app/Services/product__service.dart';
-import 'package:ecommerce_app/components/customButton.dart';
-import 'package:ecommerce_app/menu.dart';
 import 'package:ecommerce_app/model/product_model.dart';
 import 'package:ecommerce_app/navigationMenuPages/myOrders.dart';
 import 'package:ecommerce_app/provider/provider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -250,7 +247,6 @@ class _PaymentState extends ConsumerState<Payment> {
     );
     await Future.delayed(const Duration(seconds: 2));
 
-    // Navigate to the next screen after the delay
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
